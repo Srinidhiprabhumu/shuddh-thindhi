@@ -2,12 +2,14 @@ import { Header } from "@/components/Storefront/Header";
 import { Footer } from "@/components/Storefront/Footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingBag, LogIn } from "lucide-react";
 import { useCartStore } from "@/lib/store";
+import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "wouter";
 
 export default function Cart() {
   const { items, removeItem, updateQuantity } = useCartStore();
+  const { isAuthenticated } = useAuth();
 
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -126,9 +128,25 @@ export default function Cart() {
                       </span>
                     </div>
                   </div>
-                  <Button size="lg" className="w-full" data-testid="button-checkout">
-                    Proceed to Checkout
-                  </Button>
+                  {isAuthenticated ? (
+                    <Link href="/checkout">
+                      <Button size="lg" className="w-full" data-testid="button-checkout">
+                        Proceed to Checkout
+                      </Button>
+                    </Link>
+                  ) : (
+                    <div className="space-y-3">
+                      <p className="text-sm text-muted-foreground text-center">
+                        Please sign in to proceed with checkout
+                      </p>
+                      <Link href="/login">
+                        <Button size="lg" className="w-full" data-testid="button-signin-checkout">
+                          <LogIn className="w-4 h-4 mr-2" />
+                          Sign in to Checkout
+                        </Button>
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </Card>
             </div>

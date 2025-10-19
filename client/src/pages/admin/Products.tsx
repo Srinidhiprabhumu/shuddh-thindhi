@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ImageUpload } from "@/components/ImageUpload";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -23,7 +24,7 @@ export default function AdminProducts() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      return await apiRequest("DELETE", `/api/products/${id}`, {});
+      return await apiRequest("DELETE", `/api/admin/products/${id}`, {});
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/products"] });
@@ -119,14 +120,12 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
     category: product?.category || "",
     inventory: product?.inventory || 0,
     isFeatured: product?.isFeatured || false,
+    images: product?.images || ["/attached_assets/generated_images/Traditional_thekua_sweet_snacks_abfa8650.png"],
   });
 
   const createMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      return await apiRequest("POST", "/api/products", {
-        ...data,
-        images: ["/attached_assets/generated_images/Traditional_thekua_sweet_snacks_abfa8650.png"],
-      });
+      return await apiRequest("POST", "/api/admin/products", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/products"] });
@@ -138,7 +137,7 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
 
   const updateMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      return await apiRequest("PATCH", `/api/products/${product!.id}`, data);
+      return await apiRequest("PATCH", `/api/admin/products/${product!.id}`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/products"] });
@@ -181,6 +180,12 @@ function ProductForm({ product, onClose }: { product: Product | null; onClose: (
           data-testid="input-product-description"
         />
       </div>
+
+      <ImageUpload
+        value={formData.images}
+        onChange={(images) => setFormData({ ...formData, images })}
+        maxImages={5}
+      />
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">

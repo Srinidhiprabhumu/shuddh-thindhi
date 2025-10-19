@@ -12,15 +12,15 @@ export default function AdminOrders() {
   const { toast } = useToast();
   
   const { data: orders = [], isLoading } = useQuery<Order[]>({
-    queryKey: ["/api/orders"],
+    queryKey: ["/api/admin/orders"],
   });
 
   const updateStatusMutation = useMutation({
     mutationFn: async ({ orderId, status }: { orderId: string; status: string }) => {
-      return await apiRequest("PATCH", `/api/orders/${orderId}/status`, { status });
+      return await apiRequest("PATCH", `/api/admin/orders/${orderId}/status`, { status });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/orders"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
       toast({ title: "Order status updated successfully" });
     },
     onError: () => {

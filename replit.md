@@ -38,8 +38,8 @@ A modern e-commerce platform for traditional Indian snacks with a comprehensive 
 7. **Subscriber Management** - View and export newsletter subscribers
 
 ## Authentication
-- Admin panel protected with login (username: admin, password: admin123)
-- Session persistence with Zustand
+- Admin panel protected with login (credentials stored securely in MongoDB)
+- Session persistence with secure session management
 
 ## Design System
 - **Fonts**: Playfair Display (serif), Inter (sans), Space Grotesk (mono)
@@ -112,9 +112,7 @@ npm run dev
 Starts both Express backend and Vite frontend on the same port.
 
 ### Admin Access
-Navigate to `/admin/login` and use:
-- Username: admin
-- Password: admin123
+Navigate to `/admin/login` and use the admin credentials configured in your environment variables.
 
 ## Recent Changes
 - Initial MVP implementation (October 17, 2025)

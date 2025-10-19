@@ -11,15 +11,15 @@ export default function AdminSubscribers() {
   const { toast } = useToast();
   
   const { data: subscribers = [], isLoading } = useQuery<Subscriber[]>({
-    queryKey: ["/api/subscribers"],
+    queryKey: ["/api/admin/subscribers"],
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      return await apiRequest("DELETE", `/api/subscribers/${id}`, {});
+      return await apiRequest("DELETE", `/api/admin/subscribers/${id}`, {});
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/subscribers"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/subscribers"] });
       toast({ title: "Subscriber removed successfully" });
     },
   });

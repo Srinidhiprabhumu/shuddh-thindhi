@@ -12,15 +12,15 @@ export default function AdminReviews() {
   const { toast } = useToast();
   
   const { data: reviews = [], isLoading } = useQuery<Review[]>({
-    queryKey: ["/api/reviews"],
+    queryKey: ["/api/admin/reviews"],
   });
 
   const approveMutation = useMutation({
     mutationFn: async (id: string) => {
-      return await apiRequest("PATCH", `/api/reviews/${id}/approve`, {});
+      return await apiRequest("PATCH", `/api/admin/reviews/${id}/approve`, {});
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/reviews"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/reviews"] });
       queryClient.invalidateQueries({ queryKey: ["/api/reviews/approved"] });
       toast({ title: "Review approved successfully" });
     },
@@ -28,10 +28,10 @@ export default function AdminReviews() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      return await apiRequest("DELETE", `/api/reviews/${id}`, {});
+      return await apiRequest("DELETE", `/api/admin/reviews/${id}`, {});
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/reviews"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/reviews"] });
       queryClient.invalidateQueries({ queryKey: ["/api/reviews/approved"] });
       toast({ title: "Review deleted successfully" });
     },

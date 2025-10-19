@@ -3,6 +3,17 @@ import { pgTable, text, varchar, integer, timestamp, boolean, real } from "drizz
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+export const users = pgTable("users", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  googleId: text("google_id").unique(),
+  email: text("email").notNull().unique(),
+  password: text("password"), // For email/password signup
+  name: text("name").notNull(),
+  avatar: text("avatar"),
+  isEmailVerified: boolean("is_email_verified").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export const admins = pgTable("admins", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   username: text("username").notNull().unique(),
@@ -23,6 +34,7 @@ export const products = pgTable("products", {
 
 export const orders = pgTable("orders", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id),
   customerName: text("customer_name").notNull(),
   customerEmail: text("customer_email").notNull(),
   customerPhone: text("customer_phone").notNull(),
@@ -63,6 +75,33 @@ export const subscribers = pgTable("subscribers", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+export const coupons = pgTable("coupons", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  code: text("code").notNull().unique(),
+  description: text("description").notNull(),
+  discountType: text("discount_type").notNull(), // 'percentage' or 'fixed'
+  discountValue: real("discount_value").notNull(),
+  minimumOrderAmount: real("minimum_order_amount").default(0),
+  maximumDiscountAmount: real("maximum_discount_amount"), // For percentage discounts
+  usageLimit: integer("usage_limit"), // null for unlimited
+  usedCount: integer("used_count").notNull().default(0),
+  isActive: boolean("is_active").notNull().default(true),
+  validFrom: timestamp("valid_from").notNull().defaultNow(),
+  validUntil: timestamp("valid_until"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const announcements = pgTable("announcements", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  text: text("text").notNull(),
+  backgroundColor: text("background_color").default("#000000"),
+  textColor: text("text_color").default("#ffffff"),
+  isActive: boolean("is_active").notNull().default(true),
+  order: integer("order").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true });
 export const insertAdminSchema = createInsertSchema(admins).omit({ id: true });
 export const insertProductSchema = createInsertSchema(products).omit({ id: true });
 export const insertOrderSchema = createInsertSchema(orders).omit({ id: true, createdAt: true });
@@ -70,6 +109,14 @@ export const insertReviewSchema = createInsertSchema(reviews).omit({ id: true, c
 export const insertBannerSchema = createInsertSchema(banners).omit({ id: true });
 export const insertBrandContentSchema = createInsertSchema(brandContent).omit({ id: true });
 export const insertSubscriberSchema = createInsertSchema(subscribers).omit({ id: true, createdAt: true });
+export const insertCouponSchema = createInsertSchema(coupons).omit({ id: true, createdAt: true, usedCount: true }).extend({
+  validFrom: z.union([z.date(), z.string().transform((str) => new Date(str))]),
+  validUntil: z.union([z.date(), z.string().transform((str) => new Date(str)), z.null()]).optional(),
+});
+export const insertAnnouncementSchema = createInsertSchema(announcements).omit({ id: true, createdAt: true });
+
+export type User = typeof users.$inferSelect;
+export type InsertUser = z.infer<typeof insertUserSchema>;
 
 export type Admin = typeof admins.$inferSelect;
 export type InsertAdmin = z.infer<typeof insertAdminSchema>;
@@ -91,6 +138,12 @@ export type InsertBrandContent = z.infer<typeof insertBrandContentSchema>;
 
 export type Subscriber = typeof subscribers.$inferSelect;
 export type InsertSubscriber = z.infer<typeof insertSubscriberSchema>;
+
+export type Coupon = typeof coupons.$inferSelect;
+export type InsertCoupon = z.infer<typeof insertCouponSchema>;
+
+export type Announcement = typeof announcements.$inferSelect;
+export type InsertAnnouncement = z.infer<typeof insertAnnouncementSchema>;
 
 export interface CartItem {
   productId: string;

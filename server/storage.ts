@@ -1,12 +1,15 @@
 import { randomUUID } from "crypto";
 import type {
+  User, InsertUser,
   Admin, InsertAdmin,
   Product, InsertProduct,
   Order, InsertOrder,
   Review, InsertReview,
   Banner, InsertBanner,
   BrandContent, InsertBrandContent,
-  Subscriber, InsertSubscriber
+  Subscriber, InsertSubscriber,
+  Coupon, InsertCoupon,
+  Announcement, InsertAnnouncement
 } from "@shared/schema";
 
 const thekua1 = "/attached_assets/generated_images/Traditional_thekua_sweet_snacks_abfa8650.png";
@@ -16,8 +19,15 @@ const banner1 = "/attached_assets/generated_images/Traditional_kitchen_banner_im
 const review1 = "/attached_assets/generated_images/Happy_family_enjoying_snacks_6a8c2e98.png";
 
 export interface IStorage {
+  getUser(id: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  getUserByGoogleId(googleId: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
+  updateUser(id: string, user: Partial<InsertUser>): Promise<User | undefined>;
+  
   getAdmin(id: string): Promise<Admin | undefined>;
   getAdminByUsername(username: string): Promise<Admin | undefined>;
+  getAllAdmins(): Promise<Admin[]>;
   createAdmin(admin: InsertAdmin): Promise<Admin>;
   
   getAllProducts(): Promise<Product[]>;
@@ -55,9 +65,19 @@ export interface IStorage {
   getSubscriberByEmail(email: string): Promise<Subscriber | undefined>;
   createSubscriber(subscriber: InsertSubscriber): Promise<Subscriber>;
   deleteSubscriber(id: string): Promise<boolean>;
+  
+  getAllCoupons(): Promise<Coupon[]>;
+  getCoupon(id: string): Promise<Coupon | undefined>;
+  getCouponByCode(code: string): Promise<Coupon | undefined>;
+  createCoupon(coupon: InsertCoupon): Promise<Coupon>;
+  updateCoupon(id: string, coupon: Partial<InsertCoupon>): Promise<Coupon | undefined>;
+  deleteCoupon(id: string): Promise<boolean>;
+  validateCoupon(code: string, orderAmount: number): Promise<{ valid: boolean; coupon?: Coupon; error?: string }>;
+  applyCoupon(code: string): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
+  private users: Map<string, User>;
   private admins: Map<string, Admin>;
   private products: Map<string, Product>;
   private orders: Map<string, Order>;
@@ -67,6 +87,7 @@ export class MemStorage implements IStorage {
   private subscribers: Map<string, Subscriber>;
 
   constructor() {
+    this.users = new Map();
     this.admins = new Map();
     this.products = new Map();
     this.orders = new Map();
@@ -79,12 +100,8 @@ export class MemStorage implements IStorage {
   }
 
   private seedData() {
-    const admin: Admin = {
-      id: "admin-1",
-      username: "admin",
-      password: "admin123",
-    };
-    this.admins.set(admin.id, admin);
+    // Admin credentials should only be in MongoDB, not in memory storage
+    // This is just for fallback/testing purposes
 
     const products: Product[] = [
       {
@@ -169,12 +186,43 @@ export class MemStorage implements IStorage {
     brandContentData.forEach(c => this.brandContent.set(c.id, c));
   }
 
+  async getUser(id: string): Promise<User | undefined> {
+    return this.users.get(id);
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(u => u.email === email);
+  }
+
+  async getUserByGoogleId(googleId: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(u => u.googleId === googleId);
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    const id = randomUUID();
+    const newUser: User = { ...user, id, createdAt: new Date() };
+    this.users.set(id, newUser);
+    return newUser;
+  }
+
+  async updateUser(id: string, user: Partial<InsertUser>): Promise<User | undefined> {
+    const existing = this.users.get(id);
+    if (!existing) return undefined;
+    const updated = { ...existing, ...user };
+    this.users.set(id, updated);
+    return updated;
+  }
+
   async getAdmin(id: string): Promise<Admin | undefined> {
     return this.admins.get(id);
   }
 
   async getAdminByUsername(username: string): Promise<Admin | undefined> {
     return Array.from(this.admins.values()).find(a => a.username === username);
+  }
+
+  async getAllAdmins(): Promise<Admin[]> {
+    return Array.from(this.admins.values());
   }
 
   async createAdmin(insertAdmin: InsertAdmin): Promise<Admin> {
@@ -357,4 +405,16 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+import { MongoStorage } from './mongodb-storage';
+
+// MongoDB Atlas only - no fallback
+const mongoStorage = new MongoStorage();
+
+export const initializeStorage = async (): Promise<void> => {
+  console.log('🔄 Initializing MongoDB Atlas connection...');
+  await mongoStorage.connect();
+  console.log('✅ MongoDB Atlas connected - all data persisted to cloud database');
+};
+
+// Direct export of MongoDB storage
+export const storage = mongoStorage;

@@ -1,5 +1,5 @@
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { LayoutDashboard, Package, ShoppingCart, MessageSquare, Image, FileText, Mail, LogOut } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, MessageSquare, Image, FileText, Mail, Tag, LogOut } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useAdminAuthStore } from "@/lib/store";
@@ -11,6 +11,7 @@ const menuItems = [
   { title: "Reviews", url: "/admin/reviews", icon: MessageSquare },
   { title: "Banners", url: "/admin/banners", icon: Image },
   { title: "Brand Content", url: "/admin/brand-content", icon: FileText },
+  { title: "Coupons", url: "/admin/coupons", icon: Tag },
   { title: "Subscribers", url: "/admin/subscribers", icon: Mail },
 ];
 

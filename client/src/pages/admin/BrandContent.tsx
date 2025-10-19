@@ -85,7 +85,7 @@ function ContentForm({ section, content, onClose }: { section: string; content?:
 
   const saveMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      return await apiRequest("POST", "/api/brand-content", {
+      return await apiRequest("POST", "/api/admin/brand-content", {
         section,
         ...data,
       });

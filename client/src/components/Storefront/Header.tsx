@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Badge } from "@/components/ui/badge";
+import { AuthButton } from "../AuthButton";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface HeaderProps {
   cartItemCount: number;
@@ -11,10 +13,12 @@ interface HeaderProps {
 export function Header({ cartItemCount }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [location] = useLocation();
+  const { isAuthenticated } = useAuth();
 
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/products", label: "Products" },
+    ...(isAuthenticated ? [{ href: "/my-orders", label: "My Orders" }] : []),
     { href: "/about", label: "Our Story" },
   ];
 
@@ -46,6 +50,8 @@ export function Header({ cartItemCount }: HeaderProps) {
             </nav>
 
             <div className="flex items-center gap-4">
+              <AuthButton />
+              
               <Link href="/cart" data-testid="link-cart">
                 <Button size="icon" variant="ghost" className="relative" data-testid="button-cart">
                   <ShoppingCart className="h-5 w-5" />

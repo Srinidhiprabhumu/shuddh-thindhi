@@ -23,7 +23,7 @@ export default function AdminBanners() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      return await apiRequest("DELETE", `/api/banners/${id}`, {});
+      return await apiRequest("DELETE", `/api/admin/banners/${id}`, {});
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/banners"] });
@@ -33,7 +33,7 @@ export default function AdminBanners() {
 
   const reorderMutation = useMutation({
     mutationFn: async (bannerIds: string[]) => {
-      return await apiRequest("POST", "/api/banners/reorder", { bannerIds });
+      return await apiRequest("POST", "/api/admin/banners/reorder", { bannerIds });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/banners"] });
@@ -153,7 +153,7 @@ function BannerForm({ banner, onClose }: { banner: Banner | null; onClose: () =>
 
   const createMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      return await apiRequest("POST", "/api/banners", {
+      return await apiRequest("POST", "/api/admin/banners", {
         ...data,
         image: "/attached_assets/generated_images/Traditional_kitchen_banner_image_f751e656.png",
       });
@@ -167,7 +167,7 @@ function BannerForm({ banner, onClose }: { banner: Banner | null; onClose: () =>
 
   const updateMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      return await apiRequest("PATCH", `/api/banners/${banner!.id}`, data);
+      return await apiRequest("PATCH", `/api/admin/banners/${banner!.id}`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/banners"] });
