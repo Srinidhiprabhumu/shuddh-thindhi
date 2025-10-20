@@ -1,10 +1,17 @@
+# Build outputs
 node_modules
 dist
+client-app/dist
+server-app/dist
+
+# OS files
 .DS_Store
-server/public
-vite.config.ts.*
+.DS_Store?
+._*
+Thumbs.db
+
+# Build artifacts
 *.tar.gz
-.vercel
 
 # Environment variables
 .env
@@ -63,11 +70,7 @@ node_modules/
 *.swo
 *~
 
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
+# System files
 .Spotlight-V100
 .Trashes
 ehthumbs.db
-Thumbs.db
