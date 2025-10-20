@@ -3,12 +3,21 @@ dotenv.config();
 
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
-// import { WebSocketServer } from 'ws'; // Disabled due to compatibility issues
+import cors from "cors";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { initializeStorage } from "./storage";
 
 const app = express();
+
+// CORS configuration
+const corsOptions = {
+  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

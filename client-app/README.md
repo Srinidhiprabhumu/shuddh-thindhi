@@ -9,13 +9,25 @@ React frontend application for the Shuddh Thindi e-commerce platform.
 - React Query (TanStack Query)
 - Zustand for state management
 
+## Environment Setup
+
+1. Copy environment template:
+```bash
+cp .env.example .env
+```
+
+2. Update the API URL if needed:
+```
+VITE_API_URL=http://localhost:5000
+```
+
 ## Development
 
 ```bash
 # Install dependencies
 npm install
 
-# Start development server
+# Start development server (runs on port 3000)
 npm run dev
 
 # Build for production
@@ -34,4 +46,8 @@ npm run preview
 - Responsive design
 
 ## API Integration
-The client connects to the server API running on port 5000 in development, and uses relative URLs in production.
+The client connects to the server API using the URL specified in `VITE_API_URL` environment variable.
+Default: http://localhost:5000
+
+## Independent Development
+This client app runs completely independently from the server. Make sure the server is running on the configured API URL for full functionality.

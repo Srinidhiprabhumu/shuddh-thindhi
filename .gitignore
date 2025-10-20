@@ -13,6 +13,12 @@ vite.config.ts.*
 .env.test.local
 .env.production.local
 
+# App-specific environment files
+client-app/.env
+client-app/.env.local
+server-app/.env
+server-app/.env.local
+
 # Logs
 logs
 *.log

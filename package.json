@@ -1,12 +1,8 @@
 {
-  "name": "shuddh-thindi-monorepo",
+  "name": "shuddh-thindi-fullstack",
   "version": "1.0.0",
   "private": true,
   "license": "MIT",
-  "workspaces": [
-    "client-app",
-    "server-app"
-  ],
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:client": "cd client-app && npm run dev",
@@ -14,8 +10,14 @@
     "build": "npm run build:client && npm run build:server",
     "build:client": "cd client-app && npm run build",
     "build:server": "cd server-app && npm run build",
-    "install:all": "npm install && cd client-app && npm install && cd ../server-app && npm install",
-    "clean": "rm -rf node_modules client-app/node_modules server-app/node_modules client-app/dist server-app/dist"
+    "start": "concurrently \"npm run start:server\" \"npm run start:client\"",
+    "start:client": "cd client-app && npm run preview",
+    "start:server": "cd server-app && npm start",
+    "install:client": "cd client-app && npm install",
+    "install:server": "cd server-app && npm install",
+    "install:all": "npm run install:client && npm run install:server",
+    "clean": "rm -rf client-app/node_modules server-app/node_modules client-app/dist server-app/dist",
+    "clean:all": "npm run clean && rm -rf node_modules"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
