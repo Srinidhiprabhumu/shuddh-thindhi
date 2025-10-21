@@ -54,7 +54,7 @@ export default function Login() {
             Sign In
           </h1>
           <p className="text-muted-foreground text-center mt-2">
-            Welcome back to Shuddh Swad
+            Welcome back to Shuddh Thindhi
           </p>
         </div>
 

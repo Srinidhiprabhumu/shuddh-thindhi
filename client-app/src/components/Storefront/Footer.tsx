@@ -99,7 +99,7 @@ export function Footer({ onSubscribe }: FooterProps) {
         </div>
 
         <div className="mt-12 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-          <p data-testid="text-copyright">© {new Date().getFullYear()} Shuddh Swad. All rights reserved.</p>
+          <p data-testid="text-copyright">© {new Date().getFullYear()} Shuddh Thindhi. All rights reserved.</p>
         </div>
       </div>
     </footer>
