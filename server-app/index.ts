@@ -28,9 +28,7 @@ const app = express();
 // CORS configuration
 const corsOptions = {
   origin: [
-    process.env.CLIENT_URL || 'http://localhost:3000',
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
+    process.env.CLIENT_URL || 'https://shuddh-thindhi-1.onrender.com',
     'https://shuddh-thindhi-1.onrender.com'
   ],
   credentials: true,
@@ -134,9 +132,9 @@ app.use((req, res, next) => {
     const port = parseInt(process.env.PORT || '5001', 10);
     server.listen(port, '0.0.0.0', () => {
       log(`API server running on port ${port}`);
-      log(`CORS enabled for: ${process.env.CLIENT_URL || 'http://localhost:3000'}`);
-      log(`Admin setup available at: http://localhost:${port}/api/admin/setup`);
-      log(`Static files served from: http://localhost:${port}/attached_assets/`);
+      log(`CORS enabled for: ${process.env.CLIENT_URL || 'https://shuddh-thindhi-1.onrender.com'}`);
+      log(`Admin setup available at: https://shuddh-thindhi.onrender.com/api/admin/setup`);
+      log(`Static files served from: https://shuddh-thindhi.onrender.com/attached_assets/`);
     });
 
     // WebSocket disabled due to compatibility issues
