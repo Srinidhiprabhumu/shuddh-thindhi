@@ -43,19 +43,18 @@ export default function Home() {
     if (loginSuccess === 'success') {
       console.log('OAuth login success detected, refreshing user data...');
       
-      // Add a small delay to ensure session is fully established
-      setTimeout(async () => {
+      // Add a delay to ensure session is fully established
+      const timer = setTimeout(async () => {
         try {
-          // First, check OAuth status
-          const oauthResponse = await fetch(`${window.location.origin}/api/auth/oauth-status`, {
-            credentials: 'include'
-          });
-          const oauthData = await oauthResponse.json();
-          console.log('OAuth status check:', oauthData);
-          
-          // Then refresh user data
+          // Refresh user data multiple times to ensure session is caught
           await refetchUser();
           console.log('User data refreshed successfully');
+          
+          // Try again after another short delay
+          setTimeout(async () => {
+            await refetchUser();
+            console.log('Second refresh complete');
+          }, 500);
           
           // Clear cart for fresh login
           clearCart();
@@ -67,37 +66,15 @@ export default function Home() {
           });
         } catch (error) {
           console.error('Failed to refresh user data:', error);
-          
-          // Try checking session test endpoint
-          try {
-            const sessionResponse = await fetch(`${window.location.origin}/api/test/session`, {
-              credentials: 'include'
-            });
-            const sessionData = await sessionResponse.json();
-            console.log('Session test data:', sessionData);
-          } catch (sessionError) {
-            console.error('Session test failed:', sessionError);
-          }
-          
-          // Try one more time after another delay
-          setTimeout(() => {
-            refetchUser().catch(() => {
-              console.error('Second attempt to refresh user data failed');
-            });
-          }, 1000);
-          
-          // Still show success message
-          toast({
-            title: "Welcome back!",
-            description: "You have been logged in with Google successfully.",
-          });
         }
-      }, 1000); // Increased delay to 1000ms
+      }, 1500); // Increased delay to 1.5 seconds
       
       // Clean up URL by removing the login parameter
-      setLocation('/');
+      window.history.replaceState({}, document.title, '/');
+      
+      return () => clearTimeout(timer);
     }
-  }, [refetchUser, toast, setLocation]);
+  }, [refetchUser, toast, clearCart]);
 
   const handleAddToCart = (product: Product) => {
     addItem({

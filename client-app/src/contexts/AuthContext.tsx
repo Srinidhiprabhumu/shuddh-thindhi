@@ -37,13 +37,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const userData = await api.auth.getUser();
       console.log('Auth check result:', userData ? 'User found' : 'No user');
       if (userData) {
-        setUser(userData);
+        setUser(userData as User);
       } else {
         setUser(null);
       }
-    } catch (error) {
+    } catch (error: any) {
       // Only log non-auth errors
-      if (error.message !== 'Not authenticated') {
+      if (error?.message !== 'Not authenticated') {
         console.error('Auth check failed:', error);
       }
       console.log('Auth check: Not authenticated');
@@ -60,7 +60,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const loginWithEmail = async (email: string, password: string): Promise<boolean> => {
     try {
       const userData = await api.auth.login(email, password);
-      setUser(userData);
+      setUser(userData as User);
       return true;
     } catch (error) {
       console.error('Email login failed:', error);

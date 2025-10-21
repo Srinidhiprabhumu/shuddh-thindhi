@@ -322,7 +322,7 @@ export default function MyOrders() {
 
                 <OrderStatusTracker 
                   status={selectedOrder.status} 
-                  createdAt={selectedOrder.createdAt} 
+                  createdAt={typeof selectedOrder.createdAt === 'string' ? selectedOrder.createdAt : selectedOrder.createdAt.toISOString()} 
                 />
 
                 <div>
