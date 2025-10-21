@@ -4,6 +4,7 @@ dotenv.config();
 
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
+import MongoStore from "connect-mongo";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from 'url';
@@ -93,28 +94,63 @@ app.use(express.static(clientBuildPath, {
   etag: true
 }));
 
-// Session configuration (memory store for now - will work reliably)
+// Session configuration with MongoDB store for persistence
+console.log('🔄 Configuring MongoDB session store...');
+console.log('📍 MongoDB URI:', process.env.MONGODB_URI ? 'Set ✓' : 'Missing ✗');
+
+const sessionStore = MongoStore.create({
+  mongoUrl: process.env.MONGODB_URI,
+  touchAfter: 24 * 3600, // Lazy session update
+  ttl: 24 * 60 * 60, // Session TTL (24 hours)
+  autoRemove: 'native', // Let MongoDB handle cleanup
+  crypto: {
+    secret: process.env.SESSION_SECRET || 'fallback-secret-key-for-development'
+  },
+  stringify: false // Don't stringify session data
+});
+
+sessionStore.on('connected', () => {
+  console.log('✅ MongoDB session store connected');
+});
+
+sessionStore.on('create', (sessionId: string) => {
+  console.log('📝 Session created in MongoDB:', sessionId);
+});
+
+sessionStore.on('touch', (sessionId: string) => {
+  console.log('👆 Session touched:', sessionId);
+});
+
+sessionStore.on('set', (sessionId: string) => {
+  console.log('💾 Session saved to MongoDB:', sessionId);
+});
+
+sessionStore.on('get', (sessionId: string) => {
+  console.log('📖 Session retrieved from MongoDB:', sessionId);
+});
+
+sessionStore.on('error', (error: any) => {
+  console.error('❌ MongoDB session store error:', error);
+});
+
 app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback-secret-key-for-development',
-  resave: false,
-  saveUninitialized: false,
-  name: 'sessionId', // Match the cookie name being sent
+  resave: false, // Don't save session if unmodified
+  saveUninitialized: false, // Don't create session until something stored
+  store: sessionStore,
+  name: 'sessionId',
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'lax',
-    path: '/',
-    // Don't set domain - let browser handle it automatically for same-origin
+    path: '/'
   },
-  genid: () => {
-    const id = randomUUID();
-    console.log('🔑 Generating new session ID:', id);
-    return id;
-  }
+  rolling: true, // Reset maxAge on every request
+  proxy: process.env.NODE_ENV === 'production' // Trust proxy in production
 }));
 
-console.log('✅ Session middleware configured');
+console.log('✅ Session middleware configured with MongoDB store');
 
 // Initialize Passport
 const { default: passport, configureGoogleOAuth } = await import("./auth");
