@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://shuddh-thindhi.onrender.com';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 class ApiClient {
   private baseUrl: string;

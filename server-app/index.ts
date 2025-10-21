@@ -43,6 +43,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Serve static files from attached_assets directory with proper headers
+// Serve static files from attached_assets directory with proper headers
 app.use('/attached_assets', express.static(path.join(__dirname, 'attached_assets'), {
   maxAge: '1d', // Cache for 1 day
   etag: true,
@@ -62,6 +63,21 @@ app.use('/attached_assets', express.static(path.join(__dirname, 'attached_assets
     res.setHeader('Access-Control-Allow-Origin', '*');
   }
 }));
+
+// Serve client build files (for production)
+if (process.env.NODE_ENV === 'production') {
+  const clientBuildPath = path.join(__dirname, '../client-app/dist');
+  app.use(express.static(clientBuildPath));
+  
+  // Handle client-side routing - serve index.html for all non-API routes
+  app.get('*', (req, res) => {
+    // Don't serve index.html for API routes
+    if (req.path.startsWith('/api/')) {
+      return res.status(404).json({ error: 'API endpoint not found' });
+    }
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
+  });
+}
 
 // Session configuration
 app.use(session({

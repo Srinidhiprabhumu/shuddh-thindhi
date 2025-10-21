@@ -7,7 +7,7 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://shuddh-thindhi.onrender.com';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 export async function apiRequest(
   method: string,
