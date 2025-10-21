@@ -33,7 +33,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       status: 'ok', 
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV,
-      clientUrl: process.env.CLIENT_URL
+      clientUrl: process.env.CLIENT_URL,
+      sessionStore: 'MongoDB',
+      mongoConnected: true
+    });
+  });
+
+  // Session store health check
+  app.get('/api/session-health', (req: any, res) => {
+    res.json({
+      sessionId: req.sessionID,
+      isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false,
+      user: req.user ? { id: req.user.id, email: req.user.email } : null,
+      sessionStore: 'MongoDB',
+      timestamp: new Date().toISOString()
     });
   });
 

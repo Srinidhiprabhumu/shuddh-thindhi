@@ -93,18 +93,32 @@ app.use(express.static(clientBuildPath, {
   etag: true
 }));
 
-// Session configuration with MongoDB store
+// Session configuration with MongoDB store for persistence
+const sessionStore = MongoStore.create({
+  mongoUrl: process.env.MONGODB_URI,
+  touchAfter: 24 * 3600, // lazy session update (24 hours)
+  ttl: 24 * 60 * 60, // session TTL (24 hours)
+  autoRemove: 'native', // auto remove expired sessions
+  crypto: {
+    secret: process.env.SESSION_SECRET || 'fallback-secret-key-for-development'
+  }
+});
+
+// Add event listeners for session store
+sessionStore.on('connected', () => {
+  console.log('✅ MongoDB session store connected');
+});
+
+sessionStore.on('error', (error: any) => {
+  console.error('❌ MongoDB session store error:', error);
+});
+
 app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback-secret-key-for-development',
   resave: false,
   saveUninitialized: false,
   name: 'connect.sid',
-  store: MongoStore.create({
-    mongoUrl: process.env.MONGODB_URI,
-    touchAfter: 24 * 3600, // lazy session update
-    ttl: 24 * 60 * 60, // 24 hours
-    autoRemove: 'native'
-  }),
+  store: sessionStore,
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
@@ -115,7 +129,7 @@ app.use(session({
   // Add session debugging
   genid: function(req) {
     const id = require('crypto').randomUUID();
-    console.log('Generating new session ID:', id);
+    console.log('🔑 Generating new session ID:', id, '(stored in MongoDB)');
     return id;
   }
 }));
