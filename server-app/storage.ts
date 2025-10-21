@@ -10,7 +10,7 @@ import type {
   Subscriber, InsertSubscriber,
   Coupon, InsertCoupon,
   Announcement, InsertAnnouncement
-} from "./shared/schema";
+} from "@shared/schema";
 
 const thekua1 = "/attached_assets/generated_images/Traditional_thekua_sweet_snacks_abfa8650.png";
 const thekua2 = "/attached_assets/generated_images/Jaggery_thekua_dessert_d0e3cff2.png";
