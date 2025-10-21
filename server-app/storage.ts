@@ -202,9 +202,9 @@ export class MemStorage implements IStorage {
 
   async createUser(user: InsertUser): Promise<User> {
     const id = randomUUID();
-    const newUser: User = { 
-      ...user, 
-      id, 
+    const newUser: User = {
+      ...user,
+      id,
       createdAt: new Date(),
       googleId: user.googleId || null,
       password: user.password || null,
@@ -256,8 +256,8 @@ export class MemStorage implements IStorage {
 
   async createProduct(product: InsertProduct): Promise<Product> {
     const id = randomUUID();
-    const newProduct: Product = { 
-      ...product, 
+    const newProduct: Product = {
+      ...product,
       id,
       regularPrice: product.regularPrice || null,
       inventory: product.inventory || 0,
@@ -291,9 +291,9 @@ export class MemStorage implements IStorage {
 
   async createOrder(order: InsertOrder): Promise<Order> {
     const id = randomUUID();
-    const newOrder: Order = { 
-      ...order, 
-      id, 
+    const newOrder: Order = {
+      ...order,
+      id,
       createdAt: new Date(),
       status: order.status || 'pending',
       userId: order.userId || null,
@@ -328,9 +328,9 @@ export class MemStorage implements IStorage {
 
   async createReview(review: InsertReview): Promise<Review> {
     const id = randomUUID();
-    const newReview: Review = { 
-      ...review, 
-      id, 
+    const newReview: Review = {
+      ...review,
+      id,
       createdAt: new Date(),
       isApproved: review.isApproved || false
     };
@@ -361,9 +361,9 @@ export class MemStorage implements IStorage {
   async createBanner(banner: InsertBanner): Promise<Banner> {
     const id = randomUUID();
     const maxOrder = Math.max(...Array.from(this.banners.values()).map(b => b.order), -1);
-    const newBanner: Banner = { 
-      ...banner, 
-      id, 
+    const newBanner: Banner = {
+      ...banner,
+      id,
       order: maxOrder + 1,
       title: banner.title || null,
       subtitle: banner.subtitle || null,
