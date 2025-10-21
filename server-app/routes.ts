@@ -300,6 +300,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Handle favicon.ico
+  app.get('/favicon.ico', (req, res) => {
+    res.status(204).end(); // No content
+  });
+
   // Handle client-side routing - serve index.html for all non-API routes
   app.get('*', (req, res) => {
     // Don't serve index.html for API routes

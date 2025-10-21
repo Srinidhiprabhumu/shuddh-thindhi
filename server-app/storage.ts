@@ -439,6 +439,79 @@ export class MemStorage implements IStorage {
   async deleteSubscriber(id: string): Promise<boolean> {
     return this.subscribers.delete(id);
   }
+
+  // Coupon methods
+  async getAllCoupons(): Promise<Coupon[]> {
+    return Array.from(this.coupons.values());
+  }
+
+  async getCoupon(id: string): Promise<Coupon | undefined> {
+    return this.coupons.get(id);
+  }
+
+  async getCouponByCode(code: string): Promise<Coupon | undefined> {
+    return Array.from(this.coupons.values()).find(c => c.code === code);
+  }
+
+  async createCoupon(coupon: InsertCoupon): Promise<Coupon> {
+    const id = randomUUID();
+    const newCoupon: Coupon = { 
+      ...coupon, 
+      id,
+      usedCount: coupon.usedCount || 0,
+      isActive: coupon.isActive || true,
+      createdAt: new Date()
+    };
+    this.coupons.set(id, newCoupon);
+    return newCoupon;
+  }
+
+  async updateCoupon(id: string, coupon: Partial<InsertCoupon>): Promise<Coupon | undefined> {
+    const existing = this.coupons.get(id);
+    if (!existing) return undefined;
+    const updated = { ...existing, ...coupon };
+    this.coupons.set(id, updated);
+    return updated;
+  }
+
+  async deleteCoupon(id: string): Promise<boolean> {
+    return this.coupons.delete(id);
+  }
+
+  async validateCoupon(code: string, orderAmount: number): Promise<{ valid: boolean; coupon?: Coupon; error?: string }> {
+    const coupon = await this.getCouponByCode(code);
+    
+    if (!coupon) {
+      return { valid: false, error: 'Coupon not found' };
+    }
+
+    if (!coupon.isActive) {
+      return { valid: false, error: 'Coupon is not active' };
+    }
+
+    if (coupon.expiresAt && new Date() > coupon.expiresAt) {
+      return { valid: false, error: 'Coupon has expired' };
+    }
+
+    if (coupon.minimumOrderAmount && orderAmount < coupon.minimumOrderAmount) {
+      return { valid: false, error: `Minimum order amount is ₹${coupon.minimumOrderAmount}` };
+    }
+
+    if (coupon.usageLimit && coupon.usedCount >= coupon.usageLimit) {
+      return { valid: false, error: 'Coupon usage limit reached' };
+    }
+
+    return { valid: true, coupon };
+  }
+
+  async applyCoupon(code: string): Promise<boolean> {
+    const coupon = await this.getCouponByCode(code);
+    if (!coupon) return false;
+
+    coupon.usedCount = (coupon.usedCount || 0) + 1;
+    this.coupons.set(coupon.id, coupon);
+    return true;
+  }
 }
 
 import { MongoStorage } from './mongodb-storage';
