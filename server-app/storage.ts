@@ -175,7 +175,7 @@ export class MemStorage implements IStorage {
         id: "content-story",
         section: "story",
         title: "The Beginning",
-        content: "The journey of Shuddh Swad began with a powerful, personal experience. Our 16-year-old founder's simple desire for a local thekua turned into a harsh lesson on food hygiene. This single incident sparked a powerful question: Why can't traditional snacks be both delicious and safe?\n\nThis was followed by another realization during Chhath Puja—the best snacks were scarce and seasonal. This scarcity and lack of hygiene wasn't just a problem; it was an opportunity to create something better.",
+        content: "The journey of Shuddh Thindhi began with a powerful, personal experience. Our 16-year-old founder's simple desire for a local thekua turned into a harsh lesson on food hygiene. This single incident sparked a powerful question: Why can't traditional snacks be both delicious and safe?\n\nThis was followed by another realization during Chhath Puja—the best snacks were scarce and seasonal. This scarcity and lack of hygiene wasn't just a problem; it was an opportunity to create something better.",
       },
       {
         id: "content-values",

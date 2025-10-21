@@ -40,12 +40,12 @@ export function Footer({ onSubscribe }: FooterProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
           <div>
-            <h3 className="font-serif text-2xl font-bold text-primary mb-4">Shuddh Swad</h3>
+            <h3 className="font-serif text-2xl font-bold text-primary mb-4">Shuddh Thindhi</h3>
             <p className="text-muted-foreground mb-4">
               Traditional Indian snacks crafted with purity and love. Bringing authentic flavors to your doorstep.
             </p>
             <a 
-              href="https://www.instagram.com/shuddhswad" 
+              href="https://www.instagram.com/" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 hover-elevate px-3 py-2 rounded-md"
