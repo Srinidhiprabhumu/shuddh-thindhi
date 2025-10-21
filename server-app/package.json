@@ -5,14 +5,14 @@
   "license": "MIT",
   "scripts": {
     "dev": "tsx --watch index.ts",
-    "build": "npm install && cd ../client-app && npm install && npm run build && cd ../server-app",
+    "build": "cd ../client-app && npm install && npm run build && cd ../server-app",
     "start": "tsx index.ts",
     "check": "tsc --noEmit",
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "setup-admin": "node setup-admin.js",
-    "render-build": "npm install && npm run build"
+    "postinstall": "npm run build"
   },
   "dependencies": {
     "@jridgewell/trace-mapping": "^0.3.25",
