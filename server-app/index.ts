@@ -28,9 +28,9 @@ const app = express();
 // CORS configuration
 const corsOptions = {
   origin: [
-    process.env.CLIENT_URL || 'http://localhost:3000',
+    process.env.CLIENT_URL || 'https://shuddh-thindhi.onrender.com',
     'http://localhost:3000',
-    'https://shuddh-thindhi-1.onrender.com',
+    'https://shuddh-thindhi.onrender.com',
     // Add common static site patterns
     /^https:\/\/.*\.onrender\.com$/,
     /^https:\/\/.*\.netlify\.app$/,
@@ -96,15 +96,15 @@ app.use(express.static(clientBuildPath, {
 app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback-secret-key-for-development',
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   name: 'connect.sid',
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    // For cross-origin requests
-    domain: process.env.NODE_ENV === 'production' ? undefined : undefined
+    sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'lax',
+    // Same domain, no need for cross-origin settings
+    domain: undefined
   }
 }));
 
@@ -160,7 +160,7 @@ app.use((req, res, next) => {
     });
 
     // Start the server
-    const port = parseInt(process.env.PORT || '5001', 10);
+    const port = parseInt(process.env.PORT || '10000', 10);
     server.listen(port, '0.0.0.0', () => {
       log(`API server running on port ${port}`);
       log(`CORS enabled for: ${process.env.CLIENT_URL || 'https://shuddh-thindhi-1.onrender.com'}`);

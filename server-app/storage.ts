@@ -8,8 +8,7 @@ import type {
   Banner, InsertBanner,
   BrandContent, InsertBrandContent,
   Subscriber, InsertSubscriber,
-  Coupon, InsertCoupon,
-  Announcement, InsertAnnouncement
+  Coupon, InsertCoupon
 } from "@shared/schema";
 
 const thekua1 = "/attached_assets/generated_images/Traditional_thekua_sweet_snacks_abfa8650.png";
@@ -458,9 +457,13 @@ export class MemStorage implements IStorage {
     const newCoupon: Coupon = {
       ...coupon,
       id,
-      usedCount: coupon.usedCount || 0,
-      isActive: coupon.isActive || true,
-      createdAt: new Date()
+      usedCount: 0,
+      isActive: coupon.isActive ?? true,
+      createdAt: new Date(),
+      minimumOrderAmount: coupon.minimumOrderAmount ?? null,
+      maximumDiscountAmount: coupon.maximumDiscountAmount ?? null,
+      usageLimit: coupon.usageLimit ?? null,
+      validUntil: coupon.validUntil ?? null
     };
     this.coupons.set(id, newCoupon);
     return newCoupon;
@@ -489,7 +492,7 @@ export class MemStorage implements IStorage {
       return { valid: false, error: 'Coupon is not active' };
     }
 
-    if (coupon.expiresAt && new Date() > coupon.expiresAt) {
+    if (coupon.validUntil && new Date() > coupon.validUntil) {
       return { valid: false, error: 'Coupon has expired' };
     }
 
