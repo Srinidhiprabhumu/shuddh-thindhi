@@ -44,8 +44,17 @@ export default function Home() {
       console.log('OAuth login success detected, refreshing user data...');
       
       // Add a small delay to ensure session is fully established
-      setTimeout(() => {
-        refetchUser().then(() => {
+      setTimeout(async () => {
+        try {
+          // First, check OAuth status
+          const oauthResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/oauth-status`, {
+            credentials: 'include'
+          });
+          const oauthData = await oauthResponse.json();
+          console.log('OAuth status check:', oauthData);
+          
+          // Then refresh user data
+          await refetchUser();
           console.log('User data refreshed successfully');
           
           // Clear cart for fresh login
@@ -56,8 +65,19 @@ export default function Home() {
             title: "Welcome back!",
             description: "You have been logged in with Google successfully.",
           });
-        }).catch((error) => {
+        } catch (error) {
           console.error('Failed to refresh user data:', error);
+          
+          // Try checking session test endpoint
+          try {
+            const sessionResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/test/session`, {
+              credentials: 'include'
+            });
+            const sessionData = await sessionResponse.json();
+            console.log('Session test data:', sessionData);
+          } catch (sessionError) {
+            console.error('Session test failed:', sessionError);
+          }
           
           // Try one more time after another delay
           setTimeout(() => {
@@ -71,8 +91,8 @@ export default function Home() {
             title: "Welcome back!",
             description: "You have been logged in with Google successfully.",
           });
-        });
-      }, 500); // 500ms delay to ensure session is ready
+        }
+      }, 1000); // Increased delay to 1000ms
       
       // Clean up URL by removing the login parameter
       setLocation('/');

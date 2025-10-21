@@ -13,12 +13,16 @@ import { insertReviewSchema, insertBannerSchema, insertBrandContentSchema, inser
 export async function registerRoutes(app: Express): Promise<Server> {
   // Test endpoint to check session
   app.get('/api/test/session', (req: any, res) => {
+    console.log('Session test - Headers:', req.headers.cookie);
+    console.log('Session test - Session ID:', req.sessionID);
+    console.log('Session test - Is authenticated:', req.isAuthenticated ? req.isAuthenticated() : false);
     res.json({
       sessionId: req.sessionID,
       session: req.session,
       isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false,
       user: req.user || null,
-      adminId: req.session?.adminId || null
+      adminId: req.session?.adminId || null,
+      cookies: req.headers.cookie
     });
   });
 

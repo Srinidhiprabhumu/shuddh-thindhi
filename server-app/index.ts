@@ -67,8 +67,8 @@ app.use('/attached_assets', express.static(path.join(__dirname, 'attached_assets
 app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback-secret-key-for-development',
   resave: false,
-  saveUninitialized: false,
-  name: 'sessionId',
+  saveUninitialized: true, // Changed to true for OAuth
+  name: 'connect.sid', // Use standard session name
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,

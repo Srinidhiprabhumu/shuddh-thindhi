@@ -107,7 +107,15 @@ router.get('/google/callback',
     console.log('OAuth callback - User authenticated:', !!req.user);
     console.log('OAuth callback - Session ID:', req.sessionID);
     console.log('OAuth callback - Session data:', req.session);
-    res.redirect(`${process.env.CLIENT_URL}/?login=success`);
+    console.log('OAuth callback - Cookies will be set:', res.getHeaders()['set-cookie']);
+    
+    // Force session save before redirect
+    req.session.save((err) => {
+      if (err) {
+        console.error('Session save error:', err);
+      }
+      res.redirect(`${process.env.CLIENT_URL}/?login=success`);
+    });
   }
 );
 
@@ -125,12 +133,26 @@ router.get('/user', (req, res) => {
   console.log('Auth check - Is authenticated:', req.isAuthenticated());
   console.log('Auth check - User:', req.user ? 'User found' : 'No user');
   console.log('Auth check - Session data:', req.session);
+  console.log('Auth check - Cookies received:', req.headers.cookie);
   
   if (req.isAuthenticated()) {
     res.json(req.user);
   } else {
     res.status(401).json({ error: 'Not authenticated' });
   }
+});
+
+// OAuth success check endpoint
+router.get('/oauth-status', (req, res) => {
+  console.log('OAuth status check - Session ID:', req.sessionID);
+  console.log('OAuth status check - Is authenticated:', req.isAuthenticated());
+  console.log('OAuth status check - Cookies:', req.headers.cookie);
+  
+  res.json({
+    isAuthenticated: req.isAuthenticated(),
+    user: req.user || null,
+    sessionId: req.sessionID
+  });
 });
 
 export default router;
