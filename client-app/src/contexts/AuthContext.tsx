@@ -9,6 +9,7 @@ interface AuthContextType {
   loginWithEmail: (email: string, password: string) => Promise<boolean>;
   loginWithGoogle: () => void;
   logout: () => void;
+  refetchUser: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -80,6 +81,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const refetchUser = async () => {
+    await checkAuthStatus();
+  };
+
   const value = {
     user,
     loading,
@@ -87,6 +92,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     loginWithEmail,
     loginWithGoogle,
     logout,
+    refetchUser,
     isAuthenticated: !!user
   };
 

@@ -1,4 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useLocation } from "wouter";
 import { Header } from "@/components/Storefront/Header";
 import { HeroCarousel } from "@/components/Storefront/HeroCarousel";
 import { ProductCard } from "@/components/Storefront/ProductCard";
@@ -6,11 +8,14 @@ import { ReviewsGallery } from "@/components/Storefront/ReviewsGallery";
 import { Footer } from "@/components/Storefront/Footer";
 import { Loader2, Leaf, Award, Heart, Users } from "lucide-react";
 import { useCartStore } from "@/lib/store";
+import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import type { Product, Banner, Review, BrandContent } from "@shared/schema";
 
 export default function Home() {
   const { addItem, items } = useCartStore();
+  const { refetchUser } = useAuth();
+  const [location, setLocation] = useLocation();
 
   const { data: banners = [], isLoading: bannersLoading } = useQuery<Banner[]>({
     queryKey: ["/api/banners"],
@@ -29,6 +34,26 @@ export default function Home() {
   });
 
   const { toast } = useToast();
+
+  // Handle OAuth login success
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const loginSuccess = urlParams.get('login');
+    
+    if (loginSuccess === 'success') {
+      // Refresh user data to update authentication state
+      refetchUser();
+      
+      // Show success message
+      toast({
+        title: "Login successful!",
+        description: "Welcome! You have been logged in successfully.",
+      });
+      
+      // Clean up URL by removing the login parameter
+      setLocation('/');
+    }
+  }, [refetchUser, toast, setLocation]);
 
   const handleAddToCart = (product: Product) => {
     addItem({
