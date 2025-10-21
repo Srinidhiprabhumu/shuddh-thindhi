@@ -455,8 +455,8 @@ export class MemStorage implements IStorage {
 
   async createCoupon(coupon: InsertCoupon): Promise<Coupon> {
     const id = randomUUID();
-    const newCoupon: Coupon = { 
-      ...coupon, 
+    const newCoupon: Coupon = {
+      ...coupon,
       id,
       usedCount: coupon.usedCount || 0,
       isActive: coupon.isActive || true,
@@ -480,7 +480,7 @@ export class MemStorage implements IStorage {
 
   async validateCoupon(code: string, orderAmount: number): Promise<{ valid: boolean; coupon?: Coupon; error?: string }> {
     const coupon = await this.getCouponByCode(code);
-    
+
     if (!coupon) {
       return { valid: false, error: 'Coupon not found' };
     }
