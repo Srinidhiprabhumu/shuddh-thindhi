@@ -85,6 +85,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const refetchUser = async () => {
+    setLoading(true);
     await checkAuthStatus();
   };
 

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { LogIn, Mail } from "lucide-react";
+import { LogIn, Chrome } from "lucide-react";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -106,12 +106,12 @@ export default function Login() {
           <Button
             type="button"
             variant="outline"
-            className="w-full mt-4"
+            className="w-full mt-4 bg-white hover:bg-gray-50 text-gray-700 border-gray-300"
             onClick={loginWithGoogle}
             data-testid="button-google-login"
           >
-            <Mail className="w-4 h-4 mr-2" />
-            Sign in with Google
+            <Chrome className="w-4 h-4 mr-2 text-blue-500" />
+            Continue with Google
           </Button>
         </div>
 

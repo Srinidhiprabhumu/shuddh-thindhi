@@ -13,7 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import type { Product, Banner, Review, BrandContent } from "@shared/schema";
 
 export default function Home() {
-  const { addItem, items } = useCartStore();
+  const { addItem, items, clearCart } = useCartStore();
   const { refetchUser } = useAuth();
   const [location, setLocation] = useLocation();
 
@@ -43,24 +43,36 @@ export default function Home() {
     if (loginSuccess === 'success') {
       console.log('OAuth login success detected, refreshing user data...');
       
-      // Refresh user data to update authentication state
-      refetchUser().then(() => {
-        console.log('User data refreshed successfully');
-        
-        // Show success message
-        toast({
-          title: "Login successful!",
-          description: "Welcome! You have been logged in successfully.",
+      // Add a small delay to ensure session is fully established
+      setTimeout(() => {
+        refetchUser().then(() => {
+          console.log('User data refreshed successfully');
+          
+          // Clear cart for fresh login
+          clearCart();
+          
+          // Show success message
+          toast({
+            title: "Welcome back!",
+            description: "You have been logged in with Google successfully.",
+          });
+        }).catch((error) => {
+          console.error('Failed to refresh user data:', error);
+          
+          // Try one more time after another delay
+          setTimeout(() => {
+            refetchUser().catch(() => {
+              console.error('Second attempt to refresh user data failed');
+            });
+          }, 1000);
+          
+          // Still show success message
+          toast({
+            title: "Welcome back!",
+            description: "You have been logged in with Google successfully.",
+          });
         });
-      }).catch((error) => {
-        console.error('Failed to refresh user data:', error);
-        
-        // Still show success message even if refresh fails
-        toast({
-          title: "Login successful!",
-          description: "Welcome! You have been logged in successfully.",
-        });
-      });
+      }, 500); // 500ms delay to ensure session is ready
       
       // Clean up URL by removing the login parameter
       setLocation('/');
