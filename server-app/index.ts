@@ -28,8 +28,13 @@ const app = express();
 // CORS configuration
 const corsOptions = {
   origin: [
-    process.env.CLIENT_URL || 'https://shuddh-thindhi-1.onrender.com',
-    'https://shuddh-thindhi-1.onrender.com'
+    process.env.CLIENT_URL || 'http://localhost:3000',
+    'http://localhost:3000',
+    'https://shuddh-thindhi-1.onrender.com',
+    // Add common static site patterns
+    /^https:\/\/.*\.onrender\.com$/,
+    /^https:\/\/.*\.netlify\.app$/,
+    /^https:\/\/.*\.vercel\.app$/
   ],
   credentials: true,
   optionsSuccessStatus: 200,
@@ -39,6 +44,22 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+
+// Additional headers for cross-origin requests
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS,PATCH');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -68,13 +89,15 @@ app.use('/attached_assets', express.static(path.join(__dirname, 'attached_assets
 app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback-secret-key-for-development',
   resave: false,
-  saveUninitialized: true, // Changed to true for OAuth
-  name: 'connect.sid', // Use standard session name
+  saveUninitialized: true,
+  name: 'connect.sid',
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    // For cross-origin requests
+    domain: process.env.NODE_ENV === 'production' ? undefined : undefined
   }
 }));
 
