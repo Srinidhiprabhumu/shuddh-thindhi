@@ -31,8 +31,6 @@ const corsOptions = {
     process.env.CLIENT_URL || 'http://localhost:3000',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
-    'https://shuddh-store.vercel.app',
-    'https://shuddh-thindhi.vercel.app',
     'https://shuddh-thindhi-1.onrender.com'
   ],
   credentials: true,
