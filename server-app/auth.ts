@@ -79,17 +79,27 @@ export const requireAuth = (req: any, res: any, next: any) => {
 // Middleware to check if user is admin (for session-based admin auth)
 export const requireAdmin = async (req: any, res: any, next: any) => {
   try {
+    console.log('requireAdmin check - Session ID:', req.sessionID);
+    console.log('requireAdmin check - adminId:', req.session?.adminId);
+    console.log('requireAdmin check - Path:', req.path);
+    
     // Check if admin is already authenticated in session
     if (req.session?.adminId) {
       const admin = await storage.getAdmin(req.session.adminId);
       if (admin) {
+        console.log('requireAdmin - Admin authorized:', admin.username);
         req.admin = admin;
         return next();
+      } else {
+        console.log('requireAdmin - Admin ID in session but not found in DB');
       }
+    } else {
+      console.log('requireAdmin - No adminId in session');
     }
 
     return res.status(401).json({ error: 'Admin authentication required' });
   } catch (error) {
+    console.error('requireAdmin error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

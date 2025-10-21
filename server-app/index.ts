@@ -98,13 +98,14 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback-secret-key-for-development',
   resave: false,
   saveUninitialized: false,
-  name: 'connect.sid',
+  name: 'sessionId', // Match the cookie name being sent
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'lax',
-    domain: undefined
+    path: '/',
+    // Don't set domain - let browser handle it automatically for same-origin
   },
   genid: () => {
     const id = randomUUID();
@@ -124,7 +125,7 @@ app.use(passport.session());
 // Debug middleware for authentication
 app.use((req: any, res, next) => {
   if (req.path.startsWith('/api/')) {
-    console.log(`${req.method} ${req.path} - Session: ${req.sessionID}, Auth: ${req.isAuthenticated ? req.isAuthenticated() : false}, User: ${req.user ? req.user.email : 'none'}`);
+    console.log(`${req.method} ${req.path} - Session: ${req.sessionID}, Auth: ${req.isAuthenticated ? req.isAuthenticated() : false}, User: ${req.user ? req.user.email : 'none'}, Cookie: ${req.headers.cookie ? 'present' : 'missing'}`);
   }
   next();
 });

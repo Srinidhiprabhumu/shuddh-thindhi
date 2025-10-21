@@ -6,12 +6,18 @@ import { insertOrderSchema } from '../shared/schema';
 const router = Router();
 
 // User routes for their own orders (authenticated users only)
-router.get('/', requireAuth, async (req: any, res) => {
+router.get('/', async (req: any, res) => {
   try {
+    // Check if user is authenticated
+    if (!req.isAuthenticated || !req.isAuthenticated()) {
+      return res.status(401).json({ error: 'Authentication required to view orders' });
+    }
+    
     const allOrders = await storage.getAllOrders();
     const userOrders = allOrders.filter(order => order.userId === req.user.id);
     return res.json(userOrders);
   } catch (error) {
+    console.error('Get orders error:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -44,9 +50,9 @@ router.post('/', async (req: any, res) => {
     
     const order = await storage.createOrder(orderData);
     return res.json(order);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Order creation error:', error);
-    return res.status(400).json({ error: 'Invalid order data', details: error.message });
+    return res.status(400).json({ error: 'Invalid order data', details: error?.message || 'Unknown error' });
   }
 });
 

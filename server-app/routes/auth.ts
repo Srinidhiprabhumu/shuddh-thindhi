@@ -102,22 +102,22 @@ router.post('/login', async (req, res) => {
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 router.get('/google/callback', 
-  passport.authenticate('google', { failureRedirect: `${process.env.CLIENT_URL || window.location.origin}/login?error=oauth_failed` }),
+  passport.authenticate('google', { failureRedirect: `/?error=oauth_failed` }),
   (req, res) => {
     console.log('OAuth callback - User authenticated:', !!req.user);
     console.log('OAuth callback - Session ID:', req.sessionID);
     console.log('OAuth callback - Session data:', req.session);
-    console.log('OAuth callback - CLIENT_URL:', process.env.CLIENT_URL);
+    console.log('OAuth callback - Origin:', req.get('origin'));
+    console.log('OAuth callback - Host:', req.get('host'));
     
     // Force session save before redirect
     req.session.save((err) => {
       if (err) {
         console.error('Session save error:', err);
       }
-      // Use same origin if CLIENT_URL is not set
-      const redirectUrl = process.env.CLIENT_URL || req.get('origin') || `${req.protocol}://${req.get('host')}`;
-      console.log('Redirecting to:', `${redirectUrl}/?login=success`);
-      res.redirect(`${redirectUrl}/?login=success`);
+      // Redirect to same origin (frontend and backend are on same domain)
+      console.log('Redirecting to: /?login=success');
+      res.redirect('/?login=success');
     });
   }
 );
