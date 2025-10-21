@@ -22,4 +22,9 @@ export default defineConfig({
     host: '0.0.0.0', // Bind to all interfaces for Render
     allowedHosts: 'all', // Allow all hosts for production deployment
   },
+  preview: {
+    port: 3000,
+    host: '0.0.0.0', // Bind to all interfaces for Render
+    strictPort: true,
+  },
 });
