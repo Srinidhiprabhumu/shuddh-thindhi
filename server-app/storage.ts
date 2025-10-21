@@ -24,48 +24,48 @@ export interface IStorage {
   getUserByGoogleId(googleId: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: string, user: Partial<InsertUser>): Promise<User | undefined>;
-  
+
   getAdmin(id: string): Promise<Admin | undefined>;
   getAdminByUsername(username: string): Promise<Admin | undefined>;
   getAllAdmins(): Promise<Admin[]>;
   createAdmin(admin: InsertAdmin): Promise<Admin>;
-  
+
   getAllProducts(): Promise<Product[]>;
   getFeaturedProducts(): Promise<Product[]>;
   getProduct(id: string): Promise<Product | undefined>;
   createProduct(product: InsertProduct): Promise<Product>;
   updateProduct(id: string, product: Partial<InsertProduct>): Promise<Product | undefined>;
   deleteProduct(id: string): Promise<boolean>;
-  
+
   getAllOrders(): Promise<Order[]>;
   getOrder(id: string): Promise<Order | undefined>;
   createOrder(order: InsertOrder): Promise<Order>;
   updateOrderStatus(id: string, status: string): Promise<Order | undefined>;
-  
+
   getAllReviews(): Promise<Review[]>;
   getApprovedReviews(): Promise<Review[]>;
   getReview(id: string): Promise<Review | undefined>;
   createReview(review: InsertReview): Promise<Review>;
   approveReview(id: string): Promise<Review | undefined>;
   deleteReview(id: string): Promise<boolean>;
-  
+
   getAllBanners(): Promise<Banner[]>;
   getBanner(id: string): Promise<Banner | undefined>;
   createBanner(banner: InsertBanner): Promise<Banner>;
   updateBanner(id: string, banner: Partial<InsertBanner>): Promise<Banner | undefined>;
   deleteBanner(id: string): Promise<boolean>;
   reorderBanners(bannerIds: string[]): Promise<void>;
-  
+
   getAllBrandContent(): Promise<BrandContent[]>;
   getBrandContentBySection(section: string): Promise<BrandContent | undefined>;
   upsertBrandContent(content: InsertBrandContent): Promise<BrandContent>;
-  
+
   getAllSubscribers(): Promise<Subscriber[]>;
   getSubscriber(id: string): Promise<Subscriber | undefined>;
   getSubscriberByEmail(email: string): Promise<Subscriber | undefined>;
   createSubscriber(subscriber: InsertSubscriber): Promise<Subscriber>;
   deleteSubscriber(id: string): Promise<boolean>;
-  
+
   getAllCoupons(): Promise<Coupon[]>;
   getCoupon(id: string): Promise<Coupon | undefined>;
   getCouponByCode(code: string): Promise<Coupon | undefined>;
@@ -85,6 +85,7 @@ export class MemStorage implements IStorage {
   private banners: Map<string, Banner>;
   private brandContent: Map<string, BrandContent>;
   private subscribers: Map<string, Subscriber>;
+  private coupons: Map<string, Coupon>;
 
   constructor() {
     this.users = new Map();
@@ -95,7 +96,8 @@ export class MemStorage implements IStorage {
     this.banners = new Map();
     this.brandContent = new Map();
     this.subscribers = new Map();
-    
+    this.coupons = new Map();
+
     this.seedData();
   }
 
@@ -200,7 +202,15 @@ export class MemStorage implements IStorage {
 
   async createUser(user: InsertUser): Promise<User> {
     const id = randomUUID();
-    const newUser: User = { ...user, id, createdAt: new Date() };
+    const newUser: User = { 
+      ...user, 
+      id, 
+      createdAt: new Date(),
+      googleId: user.googleId || null,
+      password: user.password || null,
+      avatar: user.avatar || null,
+      isEmailVerified: user.isEmailVerified || false
+    };
     this.users.set(id, newUser);
     return newUser;
   }
@@ -246,7 +256,13 @@ export class MemStorage implements IStorage {
 
   async createProduct(product: InsertProduct): Promise<Product> {
     const id = randomUUID();
-    const newProduct: Product = { ...product, id };
+    const newProduct: Product = { 
+      ...product, 
+      id,
+      regularPrice: product.regularPrice || null,
+      inventory: product.inventory || 0,
+      isFeatured: product.isFeatured || false
+    };
     this.products.set(id, newProduct);
     return newProduct;
   }
@@ -264,7 +280,7 @@ export class MemStorage implements IStorage {
   }
 
   async getAllOrders(): Promise<Order[]> {
-    return Array.from(this.orders.values()).sort((a, b) => 
+    return Array.from(this.orders.values()).sort((a, b) =>
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }
@@ -275,7 +291,15 @@ export class MemStorage implements IStorage {
 
   async createOrder(order: InsertOrder): Promise<Order> {
     const id = randomUUID();
-    const newOrder: Order = { ...order, id, createdAt: new Date() };
+    const newOrder: Order = { 
+      ...order, 
+      id, 
+      createdAt: new Date(),
+      status: order.status || 'pending',
+      userId: order.userId || null,
+      couponCode: order.couponCode || null,
+      discountAmount: order.discountAmount || null
+    };
     this.orders.set(id, newOrder);
     return newOrder;
   }
@@ -289,7 +313,7 @@ export class MemStorage implements IStorage {
   }
 
   async getAllReviews(): Promise<Review[]> {
-    return Array.from(this.reviews.values()).sort((a, b) => 
+    return Array.from(this.reviews.values()).sort((a, b) =>
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }
@@ -304,7 +328,12 @@ export class MemStorage implements IStorage {
 
   async createReview(review: InsertReview): Promise<Review> {
     const id = randomUUID();
-    const newReview: Review = { ...review, id, createdAt: new Date() };
+    const newReview: Review = { 
+      ...review, 
+      id, 
+      createdAt: new Date(),
+      isApproved: review.isApproved || false
+    };
     this.reviews.set(id, newReview);
     return newReview;
   }
@@ -332,7 +361,14 @@ export class MemStorage implements IStorage {
   async createBanner(banner: InsertBanner): Promise<Banner> {
     const id = randomUUID();
     const maxOrder = Math.max(...Array.from(this.banners.values()).map(b => b.order), -1);
-    const newBanner: Banner = { ...banner, id, order: maxOrder + 1 };
+    const newBanner: Banner = { 
+      ...banner, 
+      id, 
+      order: maxOrder + 1,
+      title: banner.title || null,
+      subtitle: banner.subtitle || null,
+      isActive: banner.isActive || false
+    };
     this.banners.set(id, newBanner);
     return newBanner;
   }
@@ -380,7 +416,7 @@ export class MemStorage implements IStorage {
   }
 
   async getAllSubscribers(): Promise<Subscriber[]> {
-    return Array.from(this.subscribers.values()).sort((a, b) => 
+    return Array.from(this.subscribers.values()).sort((a, b) =>
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }

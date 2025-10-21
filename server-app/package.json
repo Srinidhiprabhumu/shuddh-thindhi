@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "tsx --watch index.ts",
-    "build": "cd ../client-app && npm install && npm run build",
+    "build": "echo 'No build step needed for API server'",
     "start": "tsx index.ts",
     "check": "tsc --noEmit",
     "db:push": "drizzle-kit push",
