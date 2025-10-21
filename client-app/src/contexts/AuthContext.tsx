@@ -33,7 +33,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const checkAuthStatus = async () => {
     try {
+      console.log('Checking authentication status...');
       const userData = await api.auth.getUser();
+      console.log('Auth check result:', userData ? 'User found' : 'No user');
       if (userData) {
         setUser(userData);
       } else {
@@ -44,6 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error.message !== 'Not authenticated') {
         console.error('Auth check failed:', error);
       }
+      console.log('Auth check: Not authenticated');
       setUser(null);
     } finally {
       setLoading(false);

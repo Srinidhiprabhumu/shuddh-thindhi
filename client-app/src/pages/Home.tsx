@@ -41,13 +41,25 @@ export default function Home() {
     const loginSuccess = urlParams.get('login');
     
     if (loginSuccess === 'success') {
-      // Refresh user data to update authentication state
-      refetchUser();
+      console.log('OAuth login success detected, refreshing user data...');
       
-      // Show success message
-      toast({
-        title: "Login successful!",
-        description: "Welcome! You have been logged in successfully.",
+      // Refresh user data to update authentication state
+      refetchUser().then(() => {
+        console.log('User data refreshed successfully');
+        
+        // Show success message
+        toast({
+          title: "Login successful!",
+          description: "Welcome! You have been logged in successfully.",
+        });
+      }).catch((error) => {
+        console.error('Failed to refresh user data:', error);
+        
+        // Still show success message even if refresh fails
+        toast({
+          title: "Login successful!",
+          description: "Welcome! You have been logged in successfully.",
+        });
       });
       
       // Clean up URL by removing the login parameter
