@@ -1,5 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import path from "path";
 import authRoutes from "./routes/auth";
 import adminRoutes from "./routes/admin";
 import productRoutes from "./routes/products";
@@ -297,6 +298,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       return res.status(500).json({ error: "Internal server error" });
     }
+  });
+
+  // Handle client-side routing - serve index.html for all non-API routes
+  app.get('*', (req, res) => {
+    // Don't serve index.html for API routes
+    if (req.path.startsWith('/api/') || req.path.startsWith('/attached_assets/')) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+    res.sendFile(path.join(__dirname, '../client-app/dist/index.html'));
   });
 
   const httpServer = createServer(app);

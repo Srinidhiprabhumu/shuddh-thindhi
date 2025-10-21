@@ -85,6 +85,13 @@ app.use('/attached_assets', express.static(path.join(__dirname, 'attached_assets
   }
 }));
 
+// Serve client build files
+const clientBuildPath = path.join(__dirname, '../client-app/dist');
+app.use(express.static(clientBuildPath, {
+  maxAge: '1d',
+  etag: true
+}));
+
 // Session configuration
 app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback-secret-key-for-development',
