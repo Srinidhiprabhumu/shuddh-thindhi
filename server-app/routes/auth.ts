@@ -102,19 +102,22 @@ router.post('/login', async (req, res) => {
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 router.get('/google/callback', 
-  passport.authenticate('google', { failureRedirect: `${process.env.CLIENT_URL}/login?error=oauth_failed` }),
+  passport.authenticate('google', { failureRedirect: `${process.env.CLIENT_URL || window.location.origin}/login?error=oauth_failed` }),
   (req, res) => {
     console.log('OAuth callback - User authenticated:', !!req.user);
     console.log('OAuth callback - Session ID:', req.sessionID);
     console.log('OAuth callback - Session data:', req.session);
-    console.log('OAuth callback - Cookies will be set:', res.getHeaders()['set-cookie']);
+    console.log('OAuth callback - CLIENT_URL:', process.env.CLIENT_URL);
     
     // Force session save before redirect
     req.session.save((err) => {
       if (err) {
         console.error('Session save error:', err);
       }
-      res.redirect(`${process.env.CLIENT_URL}/?login=success`);
+      // Use same origin if CLIENT_URL is not set
+      const redirectUrl = process.env.CLIENT_URL || req.get('origin') || `${req.protocol}://${req.get('host')}`;
+      console.log('Redirecting to:', `${redirectUrl}/?login=success`);
+      res.redirect(`${redirectUrl}/?login=success`);
     });
   }
 );
@@ -144,15 +147,26 @@ router.get('/user', (req, res) => {
 
 // OAuth success check endpoint
 router.get('/oauth-status', (req, res) => {
-  console.log('OAuth status check - Session ID:', req.sessionID);
-  console.log('OAuth status check - Is authenticated:', req.isAuthenticated());
-  console.log('OAuth status check - Cookies:', req.headers.cookie);
-  
-  res.json({
-    isAuthenticated: req.isAuthenticated(),
-    user: req.user || null,
-    sessionId: req.sessionID
-  });
+  try {
+    console.log('OAuth status check - Session ID:', req.sessionID);
+    console.log('OAuth status check - Is authenticated:', req.isAuthenticated());
+    console.log('OAuth status check - Cookies:', req.headers.cookie);
+    console.log('OAuth status check - User:', req.user ? 'User found' : 'No user');
+    
+    res.json({
+      isAuthenticated: req.isAuthenticated(),
+      user: req.user || null,
+      sessionId: req.sessionID,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('OAuth status check error:', error);
+    res.status(500).json({ 
+      error: 'Internal server error',
+      isAuthenticated: false,
+      user: null 
+    });
+  }
 });
 
 export default router;

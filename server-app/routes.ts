@@ -27,6 +27,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Simple health check endpoint
+  app.get('/api/health', (req, res) => {
+    res.json({ 
+      status: 'ok', 
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV,
+      clientUrl: process.env.CLIENT_URL
+    });
+  });
+
   // Register organized route modules
   app.use('/api/auth', authRoutes);
   app.use('/api/admin', adminRoutes);

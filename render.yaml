@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: shuddh-thindhi
+    env: node
+    plan: free
+    buildCommand: cd server-app && npm install && npm run build
+    startCommand: cd server-app && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        value: mongodb+srv://srinidhiprabhumu0512_db_user:AMXtdiyFOhciIaG1@cluster0.gywbz3m.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      - key: SESSION_SECRET
+        value: Xt7$nM9kL2pV8bN4qR1wE5yU3iO6aS9dF2gH7jK4lM1nP8qR5tY7uI3oA6sD9fG2
+      - key: GOOGLE_CLIENT_ID
+        value: 78440034359-f9aq71o5jhmmlgkril3bok5vko3mt7tj.apps.googleusercontent.com
+      - key: GOOGLE_CLIENT_SECRET
+        value: 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
+      - key: GOOGLE_CALLBACK_URL
+        value: https://shuddh-thindhi.onrender.com/api/auth/google/callback
+      - key: CLIENT_URL
+        value: https://shuddh-thindhi.onrender.com

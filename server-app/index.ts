@@ -3,6 +3,7 @@ dotenv.config();
 
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
+import MongoStore from "connect-mongo";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from 'url';
@@ -92,19 +93,30 @@ app.use(express.static(clientBuildPath, {
   etag: true
 }));
 
-// Session configuration
+// Session configuration with MongoDB store
 app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback-secret-key-for-development',
   resave: false,
   saveUninitialized: false,
   name: 'connect.sid',
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI,
+    touchAfter: 24 * 3600, // lazy session update
+    ttl: 24 * 60 * 60, // 24 hours
+    autoRemove: 'native'
+  }),
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'lax',
-    // Same domain, no need for cross-origin settings
     domain: undefined
+  },
+  // Add session debugging
+  genid: function(req) {
+    const id = require('crypto').randomUUID();
+    console.log('Generating new session ID:', id);
+    return id;
   }
 }));
 
@@ -113,6 +125,14 @@ const { default: passport, configureGoogleOAuth } = await import("./auth");
 configureGoogleOAuth(); // Configure Google OAuth after env vars are loaded
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Debug middleware for authentication
+app.use((req: any, res, next) => {
+  if (req.path.startsWith('/api/')) {
+    console.log(`${req.method} ${req.path} - Session: ${req.sessionID}, Auth: ${req.isAuthenticated ? req.isAuthenticated() : false}, User: ${req.user ? req.user.email : 'none'}`);
+  }
+  next();
+});
 
 app.use((req, res, next) => {
   const start = Date.now();
