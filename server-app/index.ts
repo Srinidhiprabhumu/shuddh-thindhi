@@ -32,7 +32,8 @@ const corsOptions = {
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'https://shuddh-store.vercel.app',
-    'https://shuddh-thindhi.vercel.app'
+    'https://shuddh-thindhi.vercel.app',
+    'https://shuddh-thindhi-1.onrender.com'
   ],
   credentials: true,
   optionsSuccessStatus: 200,
@@ -120,7 +121,7 @@ app.use((req, res, next) => {
   try {
     // Initialize storage (MongoDB with fallback to memory)
     await initializeStorage();
-    
+
     const server = await registerRoutes(app);
 
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
