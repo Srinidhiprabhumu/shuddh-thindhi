@@ -47,7 +47,7 @@ export default function Home() {
       setTimeout(async () => {
         try {
           // First, check OAuth status
-          const oauthResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/oauth-status`, {
+          const oauthResponse = await fetch(`${window.location.origin}/api/auth/oauth-status`, {
             credentials: 'include'
           });
           const oauthData = await oauthResponse.json();
@@ -70,7 +70,7 @@ export default function Home() {
           
           // Try checking session test endpoint
           try {
-            const sessionResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/test/session`, {
+            const sessionResponse = await fetch(`${window.location.origin}/api/test/session`, {
               credentials: 'include'
             });
             const sessionData = await sessionResponse.json();

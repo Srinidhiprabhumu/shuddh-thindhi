@@ -1,4 +1,6 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || window.location.origin;
+import { API_URL } from './config';
+
+const API_BASE_URL = API_URL;
 
 class ApiClient {
   private baseUrl: string;
