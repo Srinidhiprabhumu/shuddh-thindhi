@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "tsx --watch index.ts",
-    "build": "tsc && tsc-alias",
-    "start": "node index.js",
+    "build": "echo 'No build step needed for production'",
+    "start": "tsx index.ts",
     "check": "tsc --noEmit",
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
@@ -35,6 +35,7 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
     "shuddh-thindi-monorepo": "file:..",
+    "tsx": "^4.20.5",
     "ws": "^8.18.0",
     "zod": "^3.24.2",
     "zod-validation-error": "^3.4.0"
@@ -52,7 +53,6 @@
     "drizzle-kit": "^0.31.4",
     "nodemon": "^3.0.2",
     "tsc-alias": "^1.8.8",
-    "tsx": "^4.20.5",
     "typescript": "5.6.3"
   },
   "optionalDependencies": {
