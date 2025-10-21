@@ -104,6 +104,9 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 router.get('/google/callback', 
   passport.authenticate('google', { failureRedirect: `${process.env.CLIENT_URL}/login?error=oauth_failed` }),
   (req, res) => {
+    console.log('OAuth callback - User authenticated:', !!req.user);
+    console.log('OAuth callback - Session ID:', req.sessionID);
+    console.log('OAuth callback - Session data:', req.session);
     res.redirect(`${process.env.CLIENT_URL}/?login=success`);
   }
 );
@@ -118,6 +121,11 @@ router.post('/logout', (req, res) => {
 });
 
 router.get('/user', (req, res) => {
+  console.log('Auth check - Session ID:', req.sessionID);
+  console.log('Auth check - Is authenticated:', req.isAuthenticated());
+  console.log('Auth check - User:', req.user ? 'User found' : 'No user');
+  console.log('Auth check - Session data:', req.session);
+  
   if (req.isAuthenticated()) {
     res.json(req.user);
   } else {
