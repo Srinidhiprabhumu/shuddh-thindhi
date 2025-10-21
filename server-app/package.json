@@ -4,9 +4,9 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development tsx --watch index.ts",
+    "dev": "tsx --watch index.ts",
     "build": "tsc && tsc-alias",
-    "start": "cross-env NODE_ENV=production node dist/index.js",
+    "start": "node index.js",
     "check": "tsc --noEmit",
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
@@ -48,7 +48,7 @@
     "@types/passport": "^1.0.16",
     "@types/passport-local": "^1.0.38",
     "@types/ws": "^8.5.13",
-    "cross-env": "^7.0.3",
+
     "drizzle-kit": "^0.31.4",
     "nodemon": "^3.0.2",
     "tsc-alias": "^1.8.8",
