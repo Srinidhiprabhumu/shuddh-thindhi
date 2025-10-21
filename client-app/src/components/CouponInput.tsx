@@ -49,7 +49,7 @@ export function CouponInput({
     setIsValidating(true);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/coupons/validate`, {
+      const response = await fetch(`${window.location.origin}/api/coupons/validate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

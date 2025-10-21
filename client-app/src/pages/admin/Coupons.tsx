@@ -36,7 +36,7 @@ export default function AdminCoupons() {
   const { data: coupons = [], isLoading } = useQuery({
     queryKey: ["admin-coupons"],
     queryFn: async () => {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/coupons`, {
+      const response = await fetch(`${window.location.origin}/api/admin/coupons`, {
         credentials: "include",
       });
       if (!response.ok) throw new Error("Failed to fetch coupons");
@@ -47,7 +47,7 @@ export default function AdminCoupons() {
   const createMutation = useMutation({
     mutationFn: async (data: InsertCoupon) => {
       console.log("Sending coupon data:", data);
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/coupons`, {
+      const response = await fetch(`${window.location.origin}/api/admin/coupons`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -79,7 +79,7 @@ export default function AdminCoupons() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<InsertCoupon> }) => {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/coupons/${id}`, {
+      const response = await fetch(`${window.location.origin}/api/admin/coupons/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -101,7 +101,7 @@ export default function AdminCoupons() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/coupons/${id}`, {
+      const response = await fetch(`${window.location.origin}/api/admin/coupons/${id}`, {
         method: "DELETE",
         credentials: "include",
       });

@@ -105,7 +105,7 @@ export default function Checkout() {
         discountAmount: discount,
       };
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`, {
+      const response = await fetch(`${window.location.origin}/api/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -123,7 +123,7 @@ export default function Checkout() {
       
       // Apply coupon usage if one was used
       if (appliedCoupon) {
-        await fetch(`${import.meta.env.VITE_API_URL}/api/coupons/apply`, {
+        await fetch(`${window.location.origin}/api/coupons/apply`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ code: appliedCoupon.code }),
@@ -157,7 +157,7 @@ export default function Checkout() {
   };
 
   const handleSubscribe = async (email: string) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/subscribers`, {
+    const response = await fetch(`${window.location.origin}/api/subscribers`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),

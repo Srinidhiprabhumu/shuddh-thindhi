@@ -13,7 +13,7 @@ export default function About() {
   });
 
   const handleSubscribe = async (email: string) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/subscribers`, {
+    const response = await fetch(`${window.location.origin}/api/subscribers`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),

@@ -15,7 +15,7 @@ export default function Cart() {
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleSubscribe = async (email: string) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/subscribers`, {
+    const response = await fetch(`${window.location.origin}/api/subscribers`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),

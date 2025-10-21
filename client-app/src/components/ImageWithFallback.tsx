@@ -6,11 +6,11 @@ interface ImageWithFallbackProps extends React.ImgHTMLAttributes<HTMLImageElemen
 
 export const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ 
   src, 
-  fallbackSrc = `${import.meta.env.VITE_API_URL}/attached_assets/generated_images/Traditional_thekua_sweet_snacks_abfa8650.png`,
+  fallbackSrc = `${window.location.origin}/attached_assets/generated_images/Traditional_thekua_sweet_snacks_abfa8650.png`,
   alt,
   ...props 
 }) => {
-  const [imgSrc, setImgSrc] = useState(src?.startsWith('http') ? src : `${import.meta.env.VITE_API_URL}${src}`);
+  const [imgSrc, setImgSrc] = useState(src?.startsWith('http') ? src : `${window.location.origin}${src}`);
   const [hasError, setHasError] = useState(false);
 
   const handleError = () => {

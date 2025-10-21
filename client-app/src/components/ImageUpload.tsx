@@ -43,7 +43,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       if (filesToUpload.length === 0) return;
 
       // Upload to server
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/upload`, {
+      const response = await fetch(`${window.location.origin}/api/admin/upload`, {
         method: 'POST',
         credentials: 'include',
         body: formData,
