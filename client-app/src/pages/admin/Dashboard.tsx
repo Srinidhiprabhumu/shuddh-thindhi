@@ -3,6 +3,7 @@ import { AdminLayout } from "@/components/Admin/AdminLayout";
 import { Card } from "@/components/ui/card";
 import { Package, ShoppingCart, Users, TrendingUp } from "lucide-react";
 import type { Product, Order } from "@shared/schema";
+import { getImageUrl } from "@/lib/utils/image";
 
 export default function AdminDashboard() {
   const { data: products = [] } = useQuery<Product[]>({
@@ -105,7 +106,7 @@ export default function AdminDashboard() {
                 {lowStockProducts.slice(0, 5).map((product) => (
                   <div key={product.id} className="flex justify-between items-center p-3 rounded-lg hover-elevate" data-testid={`low-stock-${product.id}`}>
                     <div className="flex items-center gap-3">
-                      <img src={product.images[0]} alt={product.name} className="w-12 h-12 object-cover rounded-md" />
+                      <img src={getImageUrl(product.images[0])} alt={product.name} className="w-12 h-12 object-cover rounded-md" />
                       <div>
                         <p className="font-medium">{product.name}</p>
                         <p className="text-sm text-muted-foreground">{product.category}</p>

@@ -11,7 +11,7 @@ import type {
   Subscriber, InsertSubscriber,
   Coupon, InsertCoupon,
   Announcement, InsertAnnouncement
-} from "@shared/schema";
+} from "./shared/schema";
 import { IStorage } from "./storage";
 
 const thekua1 = "/attached_assets/generated_images/Traditional_thekua_sweet_snacks_abfa8650.png";
@@ -130,7 +130,7 @@ export class MongoStorage implements IStorage {
 
     // Create indexes for better performance
     await this.users.createIndex({ email: 1 }, { unique: true });
-    await this.users.createIndex({ googleId: 1 }, { unique: true, sparse: true });
+    await this.users.createIndex({ googleId: 1 });
     await this.admins.createIndex({ username: 1 }, { unique: true });
     await this.subscribers.createIndex({ email: 1 }, { unique: true });
     await this.coupons.createIndex({ code: 1 }, { unique: true });

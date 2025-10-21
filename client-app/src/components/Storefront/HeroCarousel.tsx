@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Banner } from "@shared/schema";
+import { getImageUrl } from "@/lib/utils/image";
 
 interface HeroCarouselProps {
   banners: Banner[];
@@ -46,7 +47,7 @@ export function HeroCarousel({ banners }: HeroCarouselProps) {
             data-testid={`carousel-slide-${index}`}
           >
             <img
-              src={banner.image}
+              src={getImageUrl(banner.image)}
               alt={banner.title || "Banner"}
               className="w-full h-full object-cover"
             />

@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Banner } from "@shared/schema";
+import { getImageUrl } from "@/lib/utils/image";
 
 export default function AdminBanners() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -104,7 +105,7 @@ export default function AdminBanners() {
             {banners.sort((a, b) => a.order - b.order).map((banner, index) => (
               <Card key={banner.id} className="p-4" data-testid={`banner-card-${banner.id}`}>
                 <div className="flex gap-4">
-                  <img src={banner.image} alt={banner.title || "Banner"} className="w-32 h-20 object-cover rounded-lg" />
+                  <img src={getImageUrl(banner.image)} alt={banner.title || "Banner"} className="w-32 h-20 object-cover rounded-lg" />
                   <div className="flex-1">
                     <div className="flex items-start justify-between mb-2">
                       <div>

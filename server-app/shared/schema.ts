@@ -41,6 +41,8 @@ export const orders = pgTable("orders", {
   shippingAddress: text("shipping_address").notNull(),
   items: text("items").notNull(),
   totalAmount: real("total_amount").notNull(),
+  couponCode: text("coupon_code"),
+  discountAmount: real("discount_amount").default(0),
   status: text("status").notNull().default("pending"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });

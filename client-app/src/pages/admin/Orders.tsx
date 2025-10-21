@@ -76,6 +76,11 @@ export default function AdminOrders() {
                   <div className="flex items-center gap-4">
                     <div className="text-right">
                       <p className="font-mono text-xl font-bold text-primary">₹{order.totalAmount.toFixed(2)}</p>
+                      {order.couponCode && (
+                        <p className="text-sm text-green-600">
+                          Coupon: {order.couponCode} (-₹{order.discountAmount?.toFixed(2) || '0.00'})
+                        </p>
+                      )}
                     </div>
                     <Select defaultValue={order.status} onValueChange={(value) => handleStatusChange(order.id, value)}>
                       <SelectTrigger className="w-40" data-testid={`select-status-${order.id}`}>

@@ -13,6 +13,7 @@ import { Package, Clock, Truck, CheckCircle, XCircle, Eye, RefreshCw } from "luc
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { OrderStatusTracker } from "@/components/OrderStatusTracker";
+import { getImageUrl } from "@/lib/utils/image";
 import { queryClient } from "@/lib/queryClient";
 import { toast } from "@/hooks/use-toast";
 import type { Order, CartItem } from "@shared/schema";
@@ -82,7 +83,7 @@ export default function MyOrders() {
   };
 
   const handleSubscribe = async (email: string) => {
-    const response = await fetch("/api/subscribers", {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/subscribers`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -235,7 +236,7 @@ export default function MyOrders() {
                             {orderItems.slice(0, 2).map((item, index) => (
                               <div key={index} className="flex items-center gap-3">
                                 <img
-                                  src={item.image}
+                                  src={getImageUrl(item.image)}
                                   alt={item.name}
                                   className="w-12 h-12 object-cover rounded-lg bg-muted"
                                 />
@@ -330,7 +331,7 @@ export default function MyOrders() {
                     {parseOrderItems(selectedOrder.items).map((item, index) => (
                       <div key={index} className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg">
                         <img
-                          src={item.image}
+                          src={getImageUrl(item.image)}
                           alt={item.name}
                           className="w-16 h-16 object-cover rounded-lg bg-muted"
                         />

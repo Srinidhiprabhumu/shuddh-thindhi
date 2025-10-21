@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/Storefront/Header";
 import { Footer } from "@/components/Storefront/Footer";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CouponInput } from "@/components/CouponInput";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useCartStore } from "@/lib/store";
 import { useAuth } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -14,6 +15,7 @@ import { useLocation } from "wouter";
 import { toast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { useOrderUpdates } from "@/hooks/useOrderUpdates";
+import { getImageUrl } from "@/lib/utils/image";
 import type { Coupon } from "@shared/schema";
 
 export default function Checkout() {
@@ -23,23 +25,77 @@ export default function Checkout() {
   const [loading, setLoading] = useState(false);
   const { triggerOrderUpdate } = useOrderUpdates();
   const [formData, setFormData] = useState({
+    customerName: user?.name || "",
     customerPhone: "",
     shippingAddress: "",
   });
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
   const [discount, setDiscount] = useState(0);
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const total = subtotal - discount;
 
+  // Update customer name when user changes
+  useEffect(() => {
+    if (user?.name && !formData.customerName) {
+      setFormData(prev => ({ ...prev, customerName: user.name }));
+    }
+  }, [user?.name, formData.customerName]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
 
+    // Validate required fields
+    if (!formData.customerName.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter your full name.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.customerPhone.trim()) {
+      toast({
+        title: "Error", 
+        description: "Please enter your phone number.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.shippingAddress.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter your shipping address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (items.length === 0) {
+      toast({
+        title: "Error",
+        description: "Your cart is empty.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Show confirmation dialog
+    setShowConfirmation(true);
+  };
+
+  const handleConfirmOrder = async () => {
+    if (!user) return;
+
     setLoading(true);
+    setShowConfirmation(false);
     try {
       const orderData = {
-        customerName: user.name,
+        customerName: formData.customerName,
         customerEmail: user.email,
         customerPhone: formData.customerPhone,
         shippingAddress: formData.shippingAddress,
@@ -49,7 +105,7 @@ export default function Checkout() {
         discountAmount: discount,
       };
 
-      const response = await fetch("/api/orders", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -59,14 +115,15 @@ export default function Checkout() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create order");
+        const errorData = await response.json().catch(() => ({ error: 'Failed to create order' }));
+        throw new Error(errorData.error || 'Failed to create order');
       }
 
       const order = await response.json();
       
       // Apply coupon usage if one was used
       if (appliedCoupon) {
-        await fetch("/api/coupons/apply", {
+        await fetch(`${import.meta.env.VITE_API_URL}/api/coupons/apply`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ code: appliedCoupon.code }),
@@ -100,7 +157,7 @@ export default function Checkout() {
   };
 
   const handleSubscribe = async (email: string) => {
-    const response = await fetch("/api/subscribers", {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/subscribers`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -132,9 +189,12 @@ export default function Checkout() {
                     <Label htmlFor="name">Full Name</Label>
                     <Input
                       id="name"
-                      value={user?.name || ""}
-                      disabled
-                      className="bg-muted"
+                      value={formData.customerName}
+                      onChange={(e) =>
+                        setFormData({ ...formData, customerName: e.target.value })
+                      }
+                      required
+                      placeholder="Enter your full name"
                     />
                   </div>
                   <div>
@@ -174,9 +234,9 @@ export default function Checkout() {
                   <Button
                     type="submit"
                     className="w-full"
-                    disabled={loading}
+                    disabled={loading || items.length === 0}
                   >
-                    {loading ? "Placing Order..." : "Place Order"}
+                    {loading ? "Processing..." : "Review Order"}
                   </Button>
                 </form>
               </Card>
@@ -247,6 +307,98 @@ export default function Checkout() {
 
         <Footer onSubscribe={handleSubscribe} />
       </div>
+
+      {/* Order Confirmation Dialog */}
+      <Dialog open={showConfirmation} onOpenChange={(open) => !loading && setShowConfirmation(open)}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-serif">Confirm Your Order</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {/* Customer Information */}
+            <div className="bg-muted/50 p-4 rounded-lg">
+              <h3 className="font-semibold mb-3">Delivery Information</h3>
+              <div className="space-y-2 text-sm">
+                <div><strong>Name:</strong> {formData.customerName}</div>
+                <div><strong>Email:</strong> {user?.email}</div>
+                <div><strong>Phone:</strong> {formData.customerPhone}</div>
+                <div><strong>Address:</strong> {formData.shippingAddress}</div>
+              </div>
+            </div>
+
+            {/* Order Items */}
+            <div>
+              <h3 className="font-semibold mb-3">Order Items</h3>
+              <div className="space-y-3">
+                {items.map((item) => (
+                  <div key={item.productId} className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
+                    <img
+                      src={getImageUrl(item.image)}
+                      alt={item.name}
+                      className="w-16 h-16 object-cover rounded-lg"
+                    />
+                    <div className="flex-1">
+                      <h4 className="font-medium">{item.name}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        ₹{item.price.toFixed(2)} × {item.quantity}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-mono font-semibold">
+                        ₹{(item.price * item.quantity).toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Order Summary */}
+            <div className="bg-muted/50 p-4 rounded-lg">
+              <h3 className="font-semibold mb-3">Order Summary</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span>Subtotal:</span>
+                  <span className="font-mono">₹{subtotal.toFixed(2)}</span>
+                </div>
+                {discount > 0 && (
+                  <div className="flex justify-between text-green-600">
+                    <span>Discount ({appliedCoupon?.code}):</span>
+                    <span className="font-mono">-₹{discount.toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-xl font-bold border-t pt-2 text-primary">
+                  <span>Total:</span>
+                  <span className="font-mono">₹{total.toFixed(2)}</span>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground mt-2">
+                Free shipping on prepaid orders
+              </p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowConfirmation(false)}
+                className="flex-1"
+                disabled={loading}
+              >
+                Back to Edit
+              </Button>
+              <Button
+                onClick={handleConfirmOrder}
+                className="flex-1"
+                disabled={loading}
+              >
+                {loading ? "Placing Order..." : "Confirm & Place Order"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </ProtectedRoute>
   );
 }

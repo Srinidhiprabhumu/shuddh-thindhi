@@ -6,6 +6,7 @@ import { Minus, Plus, Trash2, ShoppingBag, LogIn } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "wouter";
+import { getImageUrl } from "@/lib/utils/image";
 
 export default function Cart() {
   const { items, removeItem, updateQuantity } = useCartStore();
@@ -14,7 +15,7 @@ export default function Cart() {
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleSubscribe = async (email: string) => {
-    const response = await fetch("/api/subscribers", {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/subscribers`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -54,7 +55,7 @@ export default function Cart() {
                 <Card key={item.productId} className="p-4 md:p-6" data-testid={`cart-item-${item.productId}`}>
                   <div className="flex gap-4">
                     <img
-                      src={item.image}
+                      src={getImageUrl(item.image)}
                       alt={item.name}
                       className="w-24 h-24 md:w-32 md:h-32 object-cover rounded-lg bg-muted flex-shrink-0"
                       data-testid={`img-cart-item-${item.productId}`}

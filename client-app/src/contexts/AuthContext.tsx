@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { User } from '@shared/schema';
+import type { User } from '../../../server-app/shared/schema';
+import { api } from '../lib/api';
 
 interface AuthContextType {
   user: User | null;
@@ -31,40 +32,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const checkAuthStatus = async () => {
     try {
-      const response = await fetch('/api/auth/user', {
-        credentials: 'include'
-      });
-      
-      if (response.ok) {
-        const userData = await response.json();
+      const userData = await api.auth.getUser();
+      if (userData) {
         setUser(userData);
+      } else {
+        setUser(null);
       }
     } catch (error) {
-      console.error('Auth check failed:', error);
+      // Only log non-auth errors
+      if (error.message !== 'Not authenticated') {
+        console.error('Auth check failed:', error);
+      }
+      setUser(null);
     } finally {
       setLoading(false);
     }
   };
 
   const login = () => {
-    window.location.href = '/auth/google';
+    api.auth.googleLogin();
   };
 
   const loginWithEmail = async (email: string, password: string): Promise<boolean> => {
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
-        return true;
-      }
-      return false;
+      const userData = await api.auth.login(email, password);
+      setUser(userData);
+      return true;
     } catch (error) {
       console.error('Email login failed:', error);
       return false;
@@ -72,19 +65,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const loginWithGoogle = () => {
-    window.location.href = '/auth/google';
+    api.auth.googleLogin();
   };
 
   const logout = async () => {
     try {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include'
-      });
+      await api.auth.logout();
       setUser(null);
       window.location.href = '/';
     } catch (error) {
       console.error('Logout failed:', error);
+      setUser(null);
+      window.location.href = '/';
     }
   };
 

@@ -3,6 +3,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Upload, X, Image as ImageIcon } from 'lucide-react';
+import { getImageUrl } from '@/lib/utils/image';
 
 interface ImageUploadProps {
   value?: string[];
@@ -42,7 +43,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       if (filesToUpload.length === 0) return;
 
       // Upload to server
-      const response = await fetch('/api/admin/upload', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/upload`, {
         method: 'POST',
         credentials: 'include',
         body: formData,
@@ -93,7 +94,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         {value.map((image, index) => (
           <div key={index} className="relative group">
             <img
-              src={image}
+              src={getImageUrl(image)}
               alt={`Product ${index + 1}`}
               className="w-full h-32 object-cover rounded-lg border border-border"
             />

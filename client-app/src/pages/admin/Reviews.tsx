@@ -7,6 +7,7 @@ import { Check, X } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Review } from "@shared/schema";
+import { getImageUrl } from "@/lib/utils/image";
 
 export default function AdminReviews() {
   const { toast } = useToast();
@@ -63,7 +64,7 @@ export default function AdminReviews() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {reviews.map((review) => (
               <Card key={review.id} className="overflow-hidden" data-testid={`review-card-${review.id}`}>
-                <img src={review.image} alt={`Review by ${review.customerName}`} className="w-full aspect-square object-cover" />
+                <img src={getImageUrl(review.image)} alt={`Review by ${review.customerName}`} className="w-full aspect-square object-cover" />
                 <div className="p-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold">{review.customerName}</h3>

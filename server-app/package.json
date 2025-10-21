@@ -10,7 +10,8 @@
     "check": "tsc --noEmit",
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "setup-admin": "node setup-admin.js"
   },
   "dependencies": {
     "@jridgewell/trace-mapping": "^0.3.25",

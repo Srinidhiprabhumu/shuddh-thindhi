@@ -12,6 +12,7 @@ import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import type { Product } from "@shared/schema";
+import { getImageUrl } from "@/lib/utils/image";
 
 export default function AdminProducts() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -81,7 +82,7 @@ export default function AdminProducts() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map((product) => (
               <Card key={product.id} className="overflow-hidden" data-testid={`product-card-${product.id}`}>
-                <img src={product.images[0]} alt={product.name} className="w-full aspect-square object-cover" />
+                <img src={getImageUrl(product.images[0])} alt={product.name} className="w-full aspect-square object-cover" />
                 <div className="p-4 space-y-3">
                   <h3 className="font-semibold text-lg" data-testid={`text-product-name-${product.id}`}>{product.name}</h3>
                   <div className="flex items-baseline gap-2">

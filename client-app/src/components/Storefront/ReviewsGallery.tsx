@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { getImageUrl } from "@/lib/utils/image";
 
 interface ReviewsGalleryProps {
   reviews: Review[];
@@ -38,7 +39,7 @@ export function ReviewsGallery({ reviews }: ReviewsGalleryProps) {
                 data-testid={`review-image-${index}`}
               >
                 <img
-                  src={review.image}
+                  src={getImageUrl(review.image)}
                   alt={`Review by ${review.customerName}`}
                   className="w-full h-full object-cover"
                 />
@@ -55,7 +56,7 @@ export function ReviewsGallery({ reviews }: ReviewsGalleryProps) {
           </DialogHeader>
           {selectedImage && (
             <img
-              src={selectedImage.image}
+              src={getImageUrl(selectedImage.image)}
               alt={`Review by ${selectedImage.customerName}`}
               className="w-full rounded-lg"
               data-testid="img-review-full"

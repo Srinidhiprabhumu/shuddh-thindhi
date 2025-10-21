@@ -9,6 +9,7 @@ import { Loader2, ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { useToast } from "@/hooks/use-toast";
 import type { Product } from "@shared/schema";
+import { getImageUrl } from "@/lib/utils/image";
 
 export default function ProductDetail() {
   const [, params] = useRoute("/product/:id");
@@ -38,7 +39,7 @@ export default function ProductDetail() {
   };
 
   const handleSubscribe = async (email: string) => {
-    const response = await fetch("/api/subscribers", {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/subscribers`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -95,7 +96,7 @@ export default function ProductDetail() {
             <div>
               <div className="relative aspect-square bg-muted rounded-xl overflow-hidden mb-4">
                 <img
-                  src={product.images[currentImageIndex]}
+                  src={getImageUrl(product.images[currentImageIndex])}
                   alt={product.name}
                   className="w-full h-full object-cover"
                   data-testid="img-product-main"
@@ -143,7 +144,7 @@ export default function ProductDetail() {
                       }`}
                       data-testid={`button-thumbnail-${index}`}
                     >
-                      <img src={image} alt={`${product.name} ${index + 1}`} className="w-full h-full object-cover" />
+                      <img src={getImageUrl(image)} alt={`${product.name} ${index + 1}`} className="w-full h-full object-cover" />
                     </button>
                   ))}
                 </div>

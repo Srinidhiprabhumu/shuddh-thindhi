@@ -1,7 +1,6 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { storage } from './storage';
-import type { User } from '@shared/schema';
 
 // Function to configure Google OAuth strategy after environment variables are loaded
 export function configureGoogleOAuth() {
@@ -20,20 +19,20 @@ export function configureGoogleOAuth() {
       try {
         // Check if user already exists
         let user = await storage.getUserByGoogleId(profile.id);
-        
+
         if (user) {
           return done(null, user);
         }
-        
+
         // Check if user exists with same email
         user = await storage.getUserByEmail(profile.emails?.[0]?.value || '');
-        
+
         if (user) {
           // Update existing user with Google ID
           user = await storage.updateUser(user.id, { googleId: profile.id });
           return done(null, user);
         }
-        
+
         // Create new user
         user = await storage.createUser({
           googleId: profile.id,
@@ -41,7 +40,7 @@ export function configureGoogleOAuth() {
           name: profile.displayName || '',
           avatar: profile.photos?.[0]?.value || null
         });
-        
+
         return done(null, user);
       } catch (error) {
         return done(error, undefined);
@@ -88,7 +87,7 @@ export const requireAdmin = async (req: any, res: any, next: any) => {
         return next();
       }
     }
-    
+
     return res.status(401).json({ error: 'Admin authentication required' });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
