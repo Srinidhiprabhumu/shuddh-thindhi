@@ -12,7 +12,7 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
-    
+
     const config: RequestInit = {
       credentials: 'include',
       headers: {
@@ -24,13 +24,13 @@ class ApiClient {
 
     try {
       const response = await fetch(url, config);
-      
+
       if (!response.ok) {
         // For 401 errors on auth check endpoints, don't throw - return null instead
         if (response.status === 401 && (endpoint === '/api/auth/user' || endpoint === '/api/admin/me')) {
           return null as T;
         }
-        
+
         const errorData = await response.json().catch(() => ({ error: response.statusText }));
         throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
       }
