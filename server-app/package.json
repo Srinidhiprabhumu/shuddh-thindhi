@@ -12,7 +12,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "setup-admin": "node setup-admin.js",
-    "postinstall": "npm run build"
+    "render-build": "npm install && npm run build"
   },
   "dependencies": {
     "@jridgewell/trace-mapping": "^0.3.25",
