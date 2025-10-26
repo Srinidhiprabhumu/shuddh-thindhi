@@ -1,6 +1,6 @@
 import { ShoppingCart, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Badge } from "@/components/ui/badge";
 import { AuthButton } from "../AuthButton";
@@ -16,10 +16,22 @@ export function Header({ cartItemCount }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [location] = useLocation();
   const { isAuthenticated } = useAuth();
+  const [currentAnnouncementIndex, setCurrentAnnouncementIndex] = useState(0);
 
   const { data: announcements = [] } = useQuery<Announcement[]>({
     queryKey: ["/api/announcements"],
   });
+
+  // Auto-rotate announcements every 5 seconds
+  useEffect(() => {
+    if (announcements.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentAnnouncementIndex((prev) => (prev + 1) % announcements.length);
+    }, 5000); // Change every 5 seconds
+
+    return () => clearInterval(interval);
+  }, [announcements.length]);
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -30,18 +42,17 @@ export function Header({ cartItemCount }: HeaderProps) {
 
   return (
     <>
-      {announcements.map((announcement) => (
+      {announcements.length > 0 && (
         <div
-          key={announcement.id}
-          className="py-2 text-center text-sm font-medium tracking-wide"
+          className="py-2 text-center text-sm font-medium tracking-wide transition-all duration-500 ease-in-out"
           style={{
-            backgroundColor: announcement.backgroundColor || "#000000",
-            color: announcement.textColor || "#ffffff",
+            backgroundColor: announcements[currentAnnouncementIndex]?.backgroundColor || "#000000",
+            color: announcements[currentAnnouncementIndex]?.textColor || "#ffffff",
           }}
         >
-          {announcement.text}
+          {announcements[currentAnnouncementIndex]?.text}
         </div>
-      ))}
+      )}
       
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
