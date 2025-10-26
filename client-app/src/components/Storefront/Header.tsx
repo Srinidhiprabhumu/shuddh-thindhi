@@ -44,13 +44,18 @@ export function Header({ cartItemCount }: HeaderProps) {
     <>
       {announcements.length > 0 && (
         <div
-          className="py-2 text-center text-sm font-medium tracking-wide transition-all duration-500 ease-in-out"
+          className="overflow-hidden py-2 text-sm font-medium tracking-wide relative"
           style={{
             backgroundColor: announcements[currentAnnouncementIndex]?.backgroundColor || "#000000",
             color: announcements[currentAnnouncementIndex]?.textColor || "#ffffff",
           }}
         >
-          {announcements[currentAnnouncementIndex]?.text}
+          <div
+            className="whitespace-nowrap animate-slide-left"
+            key={currentAnnouncementIndex}
+          >
+            {announcements[currentAnnouncementIndex]?.text}
+          </div>
         </div>
       )}
       
