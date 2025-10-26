@@ -48,31 +48,31 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
         </div>
       </Link>
 
-      <div className="p-4 space-y-3">
+      <div className="p-3 md:p-4 space-y-2 md:space-y-3">
         <Link href={`/product/${product.id}`}>
-          <h3 className="font-semibold text-lg hover:text-primary transition-colors cursor-pointer" data-testid={`text-product-name-${product.id}`}>
+          <h3 className="font-semibold text-sm md:text-lg hover:text-primary transition-colors cursor-pointer line-clamp-2" data-testid={`text-product-name-${product.id}`}>
             {product.name}
           </h3>
         </Link>
 
-        <div className="flex items-baseline gap-2">
-          <span className="font-mono text-2xl font-bold text-primary" data-testid={`text-price-${product.id}`}>
+        <div className="flex items-baseline gap-1 md:gap-2 flex-wrap">
+          <span className="font-mono text-lg md:text-2xl font-bold text-primary" data-testid={`text-price-${product.id}`}>
             ₹{product.price.toFixed(2)}
           </span>
           {hasDiscount && (
-            <span className="font-mono text-sm text-muted-foreground line-through" data-testid={`text-regular-price-${product.id}`}>
+            <span className="font-mono text-xs md:text-sm text-muted-foreground line-through" data-testid={`text-regular-price-${product.id}`}>
               ₹{product.regularPrice!.toFixed(2)}
             </span>
           )}
         </div>
 
         <Button
-          className="w-full"
+          className="w-full text-xs md:text-sm py-2 md:py-3"
           onClick={() => onAddToCart(product)}
           disabled={isOutOfStock}
           data-testid={`button-add-to-cart-${product.id}`}
         >
-          <ShoppingCart className="h-4 w-4 mr-2" />
+          <ShoppingCart className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
           {isOutOfStock ? "Sold Out" : "Add to Cart"}
         </Button>
       </div>
