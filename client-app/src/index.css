@@ -254,7 +254,7 @@
   /* Announcement slide across animation - single text moves from right to left */
   @keyframes slide-across {
     0% {
-      transform: translateX(100%);
+      transform: translateX(100vw);
     }
     100% {
       transform: translateX(-100%);
@@ -262,7 +262,7 @@
   }
 
   .animate-slide-across {
-    animation: slide-across 5s linear;
+    animation: slide-across 8s linear infinite;
     display: inline-block;
   }
 

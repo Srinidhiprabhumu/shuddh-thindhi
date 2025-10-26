@@ -50,10 +50,7 @@ export function Header({ cartItemCount }: HeaderProps) {
             color: announcements[currentAnnouncementIndex]?.textColor || "#ffffff",
           }}
         >
-          <div
-            className="animate-slide-across whitespace-nowrap"
-            key={currentAnnouncementIndex}
-          >
+          <div className="animate-slide-across whitespace-nowrap">
             {announcements[currentAnnouncementIndex]?.text}
           </div>
         </div>
