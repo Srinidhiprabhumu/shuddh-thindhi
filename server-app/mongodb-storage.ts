@@ -635,6 +635,57 @@ export class MongoStorage implements IStorage {
     return !!result;
   }
 
+  // Announcement methods
+  async getAllAnnouncements(): Promise<Announcement[]> {
+    return await this.announcements.find({}).sort({ order: 1 }).toArray();
+  }
+
+  async getActiveAnnouncements(): Promise<Announcement[]> {
+    return await this.announcements.find({ isActive: true }).sort({ order: 1 }).toArray();
+  }
+
+  async getAnnouncement(id: string): Promise<Announcement | undefined> {
+    const announcement = await this.announcements.findOne({ id });
+    return announcement || undefined;
+  }
+
+  async createAnnouncement(announcement: InsertAnnouncement): Promise<Announcement> {
+    const id = randomUUID();
+    const maxOrderResult = await this.announcements.findOne({}, { sort: { order: -1 } });
+    const maxOrder = maxOrderResult?.order ?? -1;
+    const newAnnouncement: Announcement = { 
+      ...announcement, 
+      id, 
+      order: maxOrder + 1,
+      createdAt: new Date() 
+    };
+    await this.announcements.insertOne(newAnnouncement);
+    return newAnnouncement;
+  }
+
+  async updateAnnouncement(id: string, announcement: Partial<InsertAnnouncement>): Promise<Announcement | undefined> {
+    const result = await this.announcements.findOneAndUpdate(
+      { id },
+      { $set: announcement },
+      { returnDocument: 'after' }
+    );
+    return result || undefined;
+  }
+
+  async deleteAnnouncement(id: string): Promise<boolean> {
+    const result = await this.announcements.deleteOne({ id });
+    return result.deletedCount > 0;
+  }
+
+  async reorderAnnouncements(announcementIds: string[]): Promise<void> {
+    for (let i = 0; i < announcementIds.length; i++) {
+      await this.announcements.updateOne(
+        { id: announcementIds[i] },
+        { $set: { order: i } }
+      );
+    }
+  }
+
   async disconnect() {
     await this.client.close();
   }

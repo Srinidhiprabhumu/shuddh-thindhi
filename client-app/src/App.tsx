@@ -29,6 +29,7 @@ import AdminBanners from "@/pages/admin/Banners";
 import AdminBrandContent from "@/pages/admin/BrandContent";
 import AdminSubscribers from "@/pages/admin/Subscribers";
 import AdminCoupons from "@/pages/admin/Coupons";
+import AdminAnnouncements from "@/pages/admin/Announcements";
 
 function Router() {
   return (
@@ -67,6 +68,9 @@ function Router() {
       </Route>
       <Route path="/admin/coupons">
         {() => <AdminRoute component={AdminCoupons} />}
+      </Route>
+      <Route path="/admin/announcements">
+        {() => <AdminRoute component={AdminAnnouncements} />}
       </Route>
 
       <Route component={NotFound} />

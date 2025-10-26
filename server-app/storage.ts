@@ -8,14 +8,10 @@ import type {
   Banner, InsertBanner,
   BrandContent, InsertBrandContent,
   Subscriber, InsertSubscriber,
-  Coupon, InsertCoupon
+  Coupon, InsertCoupon,
+  Announcement, InsertAnnouncement
 } from "@shared/schema";
 
-const thekua1 = "/attached_assets/generated_images/Traditional_thekua_sweet_snacks_abfa8650.png";
-const thekua2 = "/attached_assets/generated_images/Jaggery_thekua_dessert_d0e3cff2.png";
-const thekua3 = "/attached_assets/generated_images/Traditional_sweets_combo_pack_ccf12962.png";
-const banner1 = "/attached_assets/generated_images/Traditional_kitchen_banner_image_f751e656.png";
-const review1 = "/attached_assets/generated_images/Happy_family_enjoying_snacks_6a8c2e98.png";
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
@@ -73,6 +69,14 @@ export interface IStorage {
   deleteCoupon(id: string): Promise<boolean>;
   validateCoupon(code: string, orderAmount: number): Promise<{ valid: boolean; coupon?: Coupon; error?: string }>;
   applyCoupon(code: string): Promise<boolean>;
+
+  getAllAnnouncements(): Promise<Announcement[]>;
+  getActiveAnnouncements(): Promise<Announcement[]>;
+  getAnnouncement(id: string): Promise<Announcement | undefined>;
+  createAnnouncement(announcement: InsertAnnouncement): Promise<Announcement>;
+  updateAnnouncement(id: string, announcement: Partial<InsertAnnouncement>): Promise<Announcement | undefined>;
+  deleteAnnouncement(id: string): Promise<boolean>;
+  reorderAnnouncements(announcementIds: string[]): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -85,6 +89,7 @@ export class MemStorage implements IStorage {
   private brandContent: Map<string, BrandContent>;
   private subscribers: Map<string, Subscriber>;
   private coupons: Map<string, Coupon>;
+  private announcements: Map<string, Announcement>;
 
   constructor() {
     this.users = new Map();
@@ -96,6 +101,7 @@ export class MemStorage implements IStorage {
     this.brandContent = new Map();
     this.subscribers = new Map();
     this.coupons = new Map();
+    this.announcements = new Map();
 
     this.seedData();
   }
@@ -514,6 +520,58 @@ export class MemStorage implements IStorage {
     coupon.usedCount = (coupon.usedCount || 0) + 1;
     this.coupons.set(coupon.id, coupon);
     return true;
+  }
+
+  // Announcement methods
+  async getAllAnnouncements(): Promise<Announcement[]> {
+    return Array.from(this.announcements.values()).sort((a, b) => a.order - b.order);
+  }
+
+  async getActiveAnnouncements(): Promise<Announcement[]> {
+    return Array.from(this.announcements.values())
+      .filter(a => a.isActive)
+      .sort((a, b) => a.order - b.order);
+  }
+
+  async getAnnouncement(id: string): Promise<Announcement | undefined> {
+    return this.announcements.get(id);
+  }
+
+  async createAnnouncement(announcement: InsertAnnouncement): Promise<Announcement> {
+    const id = randomUUID();
+    const maxOrder = Math.max(...Array.from(this.announcements.values()).map(a => a.order), -1);
+    const newAnnouncement: Announcement = {
+      ...announcement,
+      id,
+      order: maxOrder + 1,
+      backgroundColor: announcement.backgroundColor || null,
+      textColor: announcement.textColor || null,
+      isActive: announcement.isActive ?? true,
+      createdAt: new Date()
+    };
+    this.announcements.set(id, newAnnouncement);
+    return newAnnouncement;
+  }
+
+  async updateAnnouncement(id: string, announcement: Partial<InsertAnnouncement>): Promise<Announcement | undefined> {
+    const existing = this.announcements.get(id);
+    if (!existing) return undefined;
+    const updated = { ...existing, ...announcement };
+    this.announcements.set(id, updated);
+    return updated;
+  }
+
+  async deleteAnnouncement(id: string): Promise<boolean> {
+    return this.announcements.delete(id);
+  }
+
+  async reorderAnnouncements(announcementIds: string[]): Promise<void> {
+    announcementIds.forEach((id, index) => {
+      const announcement = this.announcements.get(id);
+      if (announcement) {
+        this.announcements.set(id, { ...announcement, order: index });
+      }
+    });
   }
 }
 

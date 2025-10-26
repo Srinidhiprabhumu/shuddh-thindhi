@@ -13,7 +13,7 @@ import orderRoutes from "./routes/orders";
 import adminOrderRoutes from "./routes/admin-orders";
 import { requireAdmin } from "./auth";
 import { storage } from "./storage";
-import { insertReviewSchema, insertBannerSchema, insertBrandContentSchema, insertSubscriberSchema, insertCouponSchema } from "./shared/schema";
+import { insertReviewSchema, insertBannerSchema, insertBrandContentSchema, insertSubscriberSchema, insertCouponSchema, insertAnnouncementSchema } from "./shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Test endpoint to check session
@@ -324,6 +324,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.json({ success });
     } catch (error) {
       return res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Public announcements route
+  app.get("/api/announcements", async (req, res) => {
+    try {
+      const announcements = await storage.getActiveAnnouncements();
+      return res.json(announcements);
+    } catch (error) {
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Admin announcements routes
+  app.get("/api/admin/announcements", requireAdmin, async (req: any, res) => {
+    try {
+      const announcements = await storage.getAllAnnouncements();
+      return res.json(announcements);
+    } catch (error) {
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/admin/announcements", requireAdmin, async (req: any, res) => {
+    try {
+      const validated = insertAnnouncementSchema.parse(req.body);
+      const announcement = await storage.createAnnouncement(validated);
+      return res.json(announcement);
+    } catch (error) {
+      return res.status(400).json({ error: "Invalid announcement data" });
+    }
+  });
+
+  app.patch("/api/admin/announcements/:id", requireAdmin, async (req: any, res) => {
+    try {
+      const announcement = await storage.updateAnnouncement(req.params.id, req.body);
+      if (!announcement) {
+        return res.status(404).json({ error: "Announcement not found" });
+      }
+      return res.json(announcement);
+    } catch (error) {
+      return res.status(400).json({ error: "Invalid announcement data" });
+    }
+  });
+
+  app.delete("/api/admin/announcements/:id", requireAdmin, async (req: any, res) => {
+    try {
+      const deleted = await storage.deleteAnnouncement(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ error: "Announcement not found" });
+      }
+      return res.json({ success: true });
+    } catch (error) {
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/admin/announcements/reorder", requireAdmin, async (req: any, res) => {
+    try {
+      const { announcementIds } = req.body;
+      await storage.reorderAnnouncements(announcementIds);
+      return res.json({ success: true });
+    } catch (error) {
+      return res.status(400).json({ error: "Invalid reorder data" });
     }
   });
 

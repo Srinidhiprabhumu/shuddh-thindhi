@@ -5,6 +5,8 @@ import { Link, useLocation } from "wouter";
 import { Badge } from "@/components/ui/badge";
 import { AuthButton } from "../AuthButton";
 import { useAuth } from "../../contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import type { Announcement } from "@shared/schema";
 
 interface HeaderProps {
   cartItemCount: number;
@@ -15,6 +17,10 @@ export function Header({ cartItemCount }: HeaderProps) {
   const [location] = useLocation();
   const { isAuthenticated } = useAuth();
 
+  const { data: announcements = [] } = useQuery<Announcement[]>({
+    queryKey: ["/api/announcements"],
+  });
+
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/products", label: "Products" },
@@ -24,9 +30,18 @@ export function Header({ cartItemCount }: HeaderProps) {
 
   return (
     <>
-      <div className="bg-primary text-primary-foreground py-2 text-center text-sm font-medium tracking-wide">
-        Free Shipping on Prepaid Orders
-      </div>
+      {announcements.map((announcement) => (
+        <div
+          key={announcement.id}
+          className="py-2 text-center text-sm font-medium tracking-wide"
+          style={{
+            backgroundColor: announcement.backgroundColor || "#000000",
+            color: announcement.textColor || "#ffffff",
+          }}
+        >
+          {announcement.text}
+        </div>
+      ))}
       
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
