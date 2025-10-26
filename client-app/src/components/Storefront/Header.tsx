@@ -22,13 +22,13 @@ export function Header({ cartItemCount }: HeaderProps) {
     queryKey: ["/api/announcements"],
   });
 
-  // Auto-rotate announcements every 5 seconds
+  // Auto-rotate announcements every 3 seconds
   useEffect(() => {
     if (announcements.length <= 1) return;
 
     const interval = setInterval(() => {
       setCurrentAnnouncementIndex((prev) => (prev + 1) % announcements.length);
-    }, 5000); // Change every 5 seconds
+    }, 3000); // Change every 3 seconds
 
     return () => clearInterval(interval);
   }, [announcements.length]);
