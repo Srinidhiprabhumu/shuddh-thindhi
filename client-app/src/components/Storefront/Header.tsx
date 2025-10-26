@@ -51,13 +51,10 @@ export function Header({ cartItemCount }: HeaderProps) {
           }}
         >
           <div
-            className="animate-marquee whitespace-nowrap inline-block"
+            className="animate-slide-across whitespace-nowrap"
             key={currentAnnouncementIndex}
           >
-            <span className="inline-block px-4">{announcements[currentAnnouncementIndex]?.text}</span>
-            <span className="inline-block px-4">{announcements[currentAnnouncementIndex]?.text}</span>
-            <span className="inline-block px-4">{announcements[currentAnnouncementIndex]?.text}</span>
-            <span className="inline-block px-4">{announcements[currentAnnouncementIndex]?.text}</span>
+            {announcements[currentAnnouncementIndex]?.text}
           </div>
         </div>
       )}

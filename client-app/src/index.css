@@ -251,23 +251,19 @@
     @apply hidden;
   }
 
-  /* Announcement marquee animation - continuous scroll from right to left */
-  @keyframes marquee {
+  /* Announcement slide across animation - single text moves from right to left */
+  @keyframes slide-across {
     0% {
-      transform: translateX(0);
+      transform: translateX(100%);
     }
     100% {
-      transform: translateX(-50%);
+      transform: translateX(-100%);
     }
   }
 
-  .animate-marquee {
-    animation: marquee 15s linear infinite;
-  }
-
-  /* Slower speed for longer messages */
-  .animate-marquee-slow {
-    animation: marquee 25s linear infinite;
+  .animate-slide-across {
+    animation: slide-across 5s linear;
+    display: inline-block;
   }
 
   /* Placeholder styling for contentEditable div */
