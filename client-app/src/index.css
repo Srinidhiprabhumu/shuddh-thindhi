@@ -251,29 +251,14 @@
     @apply hidden;
   }
 
-  /* Announcement marquee animation - starts from complete right side */
-  @keyframes marquee-right-to-left {
+  /* New announcement scroll animation */
+  @keyframes scrollText {
     0% {
-      left: 100%;
+      transform: translateX(100vw);
     }
     100% {
-      left: -100%;
+      transform: translateX(-100%);
     }
-  }
-
-  .announcement-marquee {
-    position: absolute;
-    top: 0;
-    white-space: nowrap;
-    animation: marquee-right-to-left 15s linear infinite;
-    display: inline-block;
-  }
-
-  .announcement-container {
-    overflow: hidden;
-    position: relative;
-    width: 100%;
-    height: 100%;
   }
 
   /* Placeholder styling for contentEditable div */

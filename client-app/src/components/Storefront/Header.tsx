@@ -44,13 +44,19 @@ export function Header({ cartItemCount }: HeaderProps) {
     <>
       {announcements.length > 0 && (
         <div
-          className="announcement-container py-2 text-sm font-medium tracking-wide"
+          className="w-full py-2 text-sm font-medium tracking-wide relative overflow-hidden"
           style={{
             backgroundColor: announcements[currentAnnouncementIndex]?.backgroundColor || "#000000",
             color: announcements[currentAnnouncementIndex]?.textColor || "#ffffff",
           }}
         >
-          <div className="announcement-marquee">
+          <div 
+            className="whitespace-nowrap"
+            style={{
+              animation: 'scrollText 12s linear infinite',
+              transform: 'translateX(100%)'
+            }}
+          >
             {announcements[currentAnnouncementIndex]?.text}
           </div>
         </div>
