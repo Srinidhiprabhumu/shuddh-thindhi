@@ -50,7 +50,11 @@ export const orders = pgTable("orders", {
 export const reviews = pgTable("reviews", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   customerName: text("customer_name").notNull(),
-  image: text("image").notNull(),
+  customerEmail: text("customer_email"),
+  productId: varchar("product_id").references(() => products.id),
+  rating: integer("rating").notNull().default(5), // 1-5 stars
+  reviewText: text("review_text"),
+  image: text("image"),
   isApproved: boolean("is_approved").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });

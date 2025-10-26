@@ -10,6 +10,7 @@ import { useCartStore } from "@/lib/store";
 import { useToast } from "@/hooks/use-toast";
 import type { Product } from "@shared/schema";
 import { getImageUrl } from "@/lib/utils/image";
+import { ProductReviews } from "@/components/ProductReviews";
 
 export default function ProductDetail() {
   const [, params] = useRoute("/product/:id");
@@ -196,6 +197,11 @@ export default function ProductDetail() {
                 {isOutOfStock ? "Out of Stock" : "Add to Cart"}
               </Button>
             </div>
+          </div>
+
+          {/* Product Reviews Section */}
+          <div className="mt-16 border-t pt-16">
+            <ProductReviews productId={product.id} productName={product.name} />
           </div>
         </div>
       </main>

@@ -39,6 +39,7 @@ export interface IStorage {
 
   getAllReviews(): Promise<Review[]>;
   getApprovedReviews(): Promise<Review[]>;
+  getProductReviews(productId: string): Promise<Review[]>;
   getReview(id: string): Promise<Review | undefined>;
   createReview(review: InsertReview): Promise<Review>;
   approveReview(id: string): Promise<Review | undefined>;
@@ -163,9 +164,35 @@ export class MemStorage implements IStorage {
       {
         id: "review-1",
         customerName: "Priya Sharma",
+        customerEmail: "priya@example.com",
+        productId: "product-1",
+        rating: 5,
+        reviewText: "Absolutely delicious! The traditional taste reminds me of my grandmother's cooking. Perfect texture and authentic flavors.",
         image: review1,
         isApproved: true,
         createdAt: new Date(),
+      },
+      {
+        id: "review-2",
+        customerName: "Rajesh Kumar",
+        customerEmail: "rajesh@example.com",
+        productId: "product-1",
+        rating: 4,
+        reviewText: "Great quality sweets. Fresh and tasty. Will definitely order again for festivals.",
+        image: null,
+        isApproved: true,
+        createdAt: new Date(Date.now() - 86400000), // 1 day ago
+      },
+      {
+        id: "review-3",
+        customerName: "Anita Patel",
+        customerEmail: "anita@example.com",
+        productId: "product-2",
+        rating: 5,
+        reviewText: "Perfect for gifting! Beautiful packaging and amazing taste. My family loved it.",
+        image: null,
+        isApproved: true,
+        createdAt: new Date(Date.now() - 172800000), // 2 days ago
       },
     ];
     reviews.forEach(r => this.reviews.set(r.id, r));
@@ -325,6 +352,12 @@ export class MemStorage implements IStorage {
 
   async getApprovedReviews(): Promise<Review[]> {
     return Array.from(this.reviews.values()).filter(r => r.isApproved);
+  }
+
+  async getProductReviews(productId: string): Promise<Review[]> {
+    return Array.from(this.reviews.values())
+      .filter(r => r.productId === productId && r.isApproved)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }
 
   async getReview(id: string): Promise<Review | undefined> {

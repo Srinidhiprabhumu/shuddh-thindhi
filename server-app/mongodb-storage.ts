@@ -453,6 +453,13 @@ export class MongoStorage implements IStorage {
     return result.deletedCount > 0;
   }
 
+  async getProductReviews(productId: string): Promise<Review[]> {
+    return await this.reviews
+      .find({ productId, isApproved: true })
+      .sort({ createdAt: -1 })
+      .toArray();
+  }
+
   // Banner methods
   async getAllBanners(): Promise<Banner[]> {
     return await this.banners.find({}).sort({ order: 1 }).toArray();

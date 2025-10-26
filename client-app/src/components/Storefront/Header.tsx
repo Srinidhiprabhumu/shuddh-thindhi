@@ -17,21 +17,28 @@ export function Header({ cartItemCount }: HeaderProps) {
   const [location] = useLocation();
   const { isAuthenticated } = useAuth();
   const [currentAnnouncementIndex, setCurrentAnnouncementIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(true);
 
   const { data: announcements = [] } = useQuery<Announcement[]>({
     queryKey: ["/api/announcements"],
   });
 
-  // Auto-rotate announcements every 3 seconds
+  // Handle animation end to start next announcement
+  const handleAnimationEnd = () => {
+    if (announcements.length > 1) {
+      setIsAnimating(false);
+      // Small delay before starting next announcement
+      setTimeout(() => {
+        setCurrentAnnouncementIndex((prev) => (prev + 1) % announcements.length);
+        setIsAnimating(true);
+      }, 100);
+    }
+  };
+
+  // Reset animation when announcements change
   useEffect(() => {
-    if (announcements.length <= 1) return;
-
-    const interval = setInterval(() => {
-      setCurrentAnnouncementIndex((prev) => (prev + 1) % announcements.length);
-    }, 3000); // Change every 3 seconds
-
-    return () => clearInterval(interval);
-  }, [announcements.length]);
+    setIsAnimating(true);
+  }, [currentAnnouncementIndex]);
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -51,11 +58,13 @@ export function Header({ cartItemCount }: HeaderProps) {
           }}
         >
           <div 
+            key={`${currentAnnouncementIndex}-${isAnimating}`} // Force re-render for each announcement
             className="whitespace-nowrap"
             style={{
-              animation: 'scrollText 12s linear infinite',
-              transform: 'translateX(100%)'
+              animation: isAnimating ? 'scrollText 12s linear forwards' : 'none',
+              transform: isAnimating ? 'translateX(100%)' : 'translateX(100%)'
             }}
+            onAnimationEnd={handleAnimationEnd}
           >
             {announcements[currentAnnouncementIndex]?.text}
           </div>

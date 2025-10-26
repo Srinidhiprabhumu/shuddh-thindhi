@@ -82,6 +82,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/products/:productId/reviews", async (req, res) => {
+    try {
+      const reviews = await storage.getProductReviews(req.params.productId);
+      return res.json(reviews);
+    } catch (error) {
+      return res.status(500).json({ error: "Failed to fetch product reviews" });
+    }
+  });
+
   app.post("/api/reviews", async (req, res) => {
     try {
       const validated = insertReviewSchema.parse(req.body);
