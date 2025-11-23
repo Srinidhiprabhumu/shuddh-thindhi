@@ -20,7 +20,7 @@ export function ReviewsGallery({ reviews }: ReviewsGalleryProps) {
     return null;
   }
 
-  const displayReviews = [...approvedReviews, ...approvedReviews];
+  const displayReviews = approvedReviews;
 
   return (
     <div className="py-16 md:py-20 bg-muted/30">

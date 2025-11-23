@@ -5,10 +5,10 @@ import { Header } from "@/components/Storefront/Header";
 import { Footer } from "@/components/Storefront/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2, ShoppingCart, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { useToast } from "@/hooks/use-toast";
-import type { Product } from "@shared/schema";
+import type { Product, Review } from "@shared/schema";
 import { getImageUrl } from "@/lib/utils/image";
 import { ProductReviews } from "@/components/ProductReviews";
 
@@ -22,7 +22,41 @@ export default function ProductDetail() {
     enabled: !!params?.id,
   });
 
+  // Fetch product reviews for rating display
+  const { data: reviews = [] } = useQuery<Review[]>({
+    queryKey: [`/api/products/${params?.id}/reviews`],
+    enabled: !!params?.id,
+  });
+
   const { toast } = useToast();
+
+  // Calculate average rating and render stars
+  const approvedReviews = reviews.filter(r => r.isApproved);
+  const averageRating = approvedReviews.length > 0 
+    ? approvedReviews.reduce((sum, r) => sum + r.rating, 0) / approvedReviews.length 
+    : 0;
+
+  const renderStars = (rating: number) => {
+    return (
+      <div className="flex items-center gap-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Star
+            key={star}
+            className={`h-4 w-4 ${
+              star <= Math.round(rating)
+                ? "fill-yellow-400 text-yellow-400"
+                : "text-gray-300"
+            }`}
+          />
+        ))}
+        {approvedReviews.length > 0 && (
+          <span className="text-sm text-muted-foreground ml-2">
+            ({rating.toFixed(1)}) • {approvedReviews.length} review{approvedReviews.length !== 1 ? 's' : ''}
+          </span>
+        )}
+      </div>
+    );
+  };
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -172,6 +206,13 @@ export default function ProductDetail() {
                   </span>
                 )}
               </div>
+
+              {/* Star Rating Display */}
+              {approvedReviews.length > 0 && (
+                <div className="pt-2">
+                  {renderStars(averageRating)}
+                </div>
+              )}
 
               <div className="space-y-2">
                 <p className="text-sm text-muted-foreground">
