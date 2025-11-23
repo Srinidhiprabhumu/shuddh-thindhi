@@ -100,7 +100,7 @@ export default function Signup() {
 
       toast({
         title: "Account Created!",
-        description: "Welcome to Shuddh Thindhi! You are now logged in.",
+        description: "Welcome to Shuddha Thindi! You are now logged in.",
       });
 
       setLocation("/");
@@ -126,7 +126,7 @@ export default function Signup() {
             Create Account
           </h1>
           <p className="text-muted-foreground text-center mt-2">
-            Join Shuddh Thindhi to start ordering delicious traditional snacks
+            Join Shuddha Thindi to start ordering delicious traditional snacks
           </p>
         </div>
 

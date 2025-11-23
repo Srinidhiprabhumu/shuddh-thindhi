@@ -40,20 +40,33 @@ export function Footer({ onSubscribe }: FooterProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
           <div>
-            <h3 className="font-serif text-2xl font-bold text-primary mb-4">Shuddh Thindhi</h3>
+            <h3 className="font-serif text-2xl font-bold text-primary mb-4">Shuddha Thindi</h3>
             <p className="text-muted-foreground mb-4">
               Traditional Indian snacks crafted with purity and love. Bringing authentic flavors to your doorstep.
             </p>
-            <a 
-              href="https://www.instagram.com/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 hover-elevate px-3 py-2 rounded-md"
-              data-testid="link-instagram"
-            >
-              <Instagram className="h-5 w-5" />
-              <span className="text-sm font-medium">Follow us on Instagram</span>
-            </a>
+            <div className="space-y-3">
+              <a 
+                href="https://www.instagram.com/shuddhathindi?utm_source=qr&igsh=dzQwa3czY3pjdXdjEmail" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 hover-elevate px-3 py-2 rounded-md"
+                data-testid="link-instagram"
+              >
+                <Instagram className="h-5 w-5" />
+                <span className="text-sm font-medium">Follow us on Instagram</span>
+              </a>
+              <div className="text-muted-foreground text-sm space-y-1">
+                <p>
+                  <span className="font-medium">Email:</span>{" "}
+                  <a href="mailto:shuddhathindi@gmail.com" className="hover:text-primary transition-colors">
+                    shuddhathindi@gmail.com
+                  </a>
+                </p>
+                <p>
+                  <span className="font-medium">Address:</span> Maddur 571428
+                </p>
+              </div>
+            </div>
           </div>
 
           <div>
@@ -98,8 +111,48 @@ export function Footer({ onSubscribe }: FooterProps) {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-          <p data-testid="text-copyright">© {new Date().getFullYear()} Shuddh Thindhi. All rights reserved.</p>
+        {/* Also available on section */}
+        <div className="mt-12 pt-8 border-t border-border">
+          <h4 className="font-semibold text-lg text-center mb-6">Also available on</h4>
+          <div className="flex justify-center items-center gap-6 flex-wrap">
+            <a 
+              href="https://www.flipkart.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover-elevate transition-transform"
+              aria-label="Available on Flipkart"
+            >
+              <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center">
+                <span className="text-2xl font-bold text-blue-600">f</span>
+              </div>
+            </a>
+            <a 
+              href="https://www.meesho.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover-elevate transition-transform"
+              aria-label="Available on Meesho"
+            >
+              <div className="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center">
+                <span className="text-xl font-bold text-white">m</span>
+              </div>
+            </a>
+            <a 
+              href="https://www.amazon.in" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover-elevate transition-transform"
+              aria-label="Available on Amazon"
+            >
+              <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center">
+                <span className="text-xl font-bold text-white">a</span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
+          <p data-testid="text-copyright">© {new Date().getFullYear()} Shuddha Thindi. All rights reserved.</p>
         </div>
       </div>
     </footer>

@@ -76,7 +76,7 @@ export function Header({ cartItemCount }: HeaderProps) {
           <div className="flex items-center justify-between h-16 md:h-20">
             <Link href="/" data-testid="link-home">
               <h1 className="font-serif text-2xl md:text-3xl font-bold text-primary cursor-pointer hover-elevate rounded-md px-2 py-1">
-                Shuddh Thindhi
+                Shuddha Thindi
               </h1>
             </Link>
 

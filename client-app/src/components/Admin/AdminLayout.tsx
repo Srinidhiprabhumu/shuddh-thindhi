@@ -25,7 +25,7 @@ function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <div className="px-4 py-6">
-            <h2 className="font-serif text-2xl font-bold text-primary"> Shuddh Thindhi</h2>
+            <h2 className="font-serif text-2xl font-bold text-primary"> Shuddha Thindi</h2>
             <p className="text-sm text-muted-foreground">Admin Panel</p>
           </div>
           <SidebarGroupContent>
